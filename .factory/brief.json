@@ -1,0 +1,10 @@
+{
+  "slug": "api-example-linter",
+  "title": "API Example Linter",
+  "territory": "devtools-data",
+  "user": "API maintainers who need documentation examples to remain executable and representative as schemas and generated clients change.",
+  "smallest_useful_product": "CLI extracts JSON/curl examples from Markdown/OpenAPI, validates them against a chosen operation/schema, optionally runs safe mock checks, and posts line-level CI annotations.",
+  "artifact_class": "cli",
+  "monetization": "free",
+  "constraints": "Never execute arbitrary shell in curl blocks; mock mode by default; support versioned OpenAPI documents."
+}

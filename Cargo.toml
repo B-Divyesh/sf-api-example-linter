@@ -1,0 +1,33 @@
+[package]
+name = "api-example-linter"
+version = "0.1.0"
+edition = "2024"
+description = "Validate JSON and curl examples in Markdown and OpenAPI against an API contract"
+license = "MIT"
+repository = "https://github.com/B-Divyesh/sf-api-example-linter"
+homepage = "https://api-example-linter.sociobot.in"
+readme = "README.md"
+keywords = ["openapi", "lint", "documentation", "cli"]
+categories = ["command-line-utilities", "development-tools"]
+exclude = ["site/", ".factory/", ".github/", "dist/"]
+
+[[bin]]
+name = "api-example-linter"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+ureq = { version = "3", default-features = false }
+url = "2"
+walkdir = "2"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+strip = true
+lto = true
+codegen-units = 1
