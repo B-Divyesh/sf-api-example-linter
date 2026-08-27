@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://api-example-linter.sociobot.in/sitemap.xml

@@ -18,7 +18,7 @@ Light mode is ink on warm drafting paper; dark mode becomes a navy terminal shee
 | muted | `#536071` | `#B7C2D2` | annotations |
 | accent | `#3346A8` | `#93A5FF` | schema structure |
 | accent contrast | `#FFFFFF` | `#10182B` | readable action text |
-| signal | `#D84B36` | `#FF806C` | stale/misaligned examples |
+| signal | `#B83A2A` | `#FF806C` | stale/misaligned examples |
 | success | `#14755A` | `#5AD6AE` | passing examples |
 | warning | `#8A5A00` | `#F1BC58` | incomplete mappings |
 | rule | `#C9C4B8` | `#3A4963` | grid and dividers |

@@ -1,3 +1,11 @@
+//! Core extraction, OpenAPI mapping, validation, and report rendering.
+//!
+//! The CLI is the supported interface, but output rendering is deterministic:
+//! ```
+//! use api_example_linter::{OutputFormat, Report, render_report};
+//! let json = render_report(&Report::default(), OutputFormat::Json);
+//! assert!(json.contains("\"diagnostics\""));
+//! ```
 #![allow(clippy::collapsible_if)]
 
 use regex::Regex;
@@ -386,6 +394,10 @@ fn extract_markdown(
         if let Some((lang, mapping, start, body)) = &mut fence {
             if line.trim_start().starts_with("```") {
                 let raw = body.join("\n");
+                if lang == "curl-shell" && !raw.trim_start().starts_with("curl ") {
+                    fence = None;
+                    continue;
+                }
                 let parsed = if lang == "json" || lang == "jsonc" {
                     parse_json_example(&raw)
                 } else {
@@ -1363,5 +1375,52 @@ components:
     #[test]
     fn curl_text_is_never_executed() {
         assert!(parse_curl_body("curl x; touch /tmp/nope").is_err());
+    }
+
+    #[test]
+    fn ordinary_shell_blocks_are_ignored() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("guide.md");
+        fs::write(&path, "```sh\nnpm test\n```\n").unwrap();
+        let mut examples = Vec::new();
+        let mut diagnostics = Vec::new();
+        extract_markdown(&path, &mut examples, &mut diagnostics).unwrap();
+        assert!(examples.is_empty());
+        assert!(diagnostics.is_empty());
+    }
+
+    #[test]
+    fn mock_hosts_require_explicit_permission() {
+        let error = mock_check("http://example.com", &[], "post", "/pets", &json!({})).unwrap_err();
+        assert!(error.contains("not allowed"));
+    }
+
+    #[test]
+    fn mock_check_accepts_a_local_success_response() {
+        use std::net::TcpListener;
+        use std::thread;
+
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        let port = listener.local_addr().unwrap().port();
+        let server = thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            let mut request = [0_u8; 1024];
+            let read = stream.read(&mut request).unwrap();
+            assert!(String::from_utf8_lossy(&request[..read]).starts_with("POST /pets HTTP/1.1"));
+            stream
+                .write_all(
+                    b"HTTP/1.1 204 No Content\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+                )
+                .unwrap();
+        });
+        mock_check(
+            &format!("http://127.0.0.1:{port}/"),
+            &[],
+            "post",
+            "/pets",
+            &json!({"name":"Ada"}),
+        )
+        .unwrap();
+        server.join().unwrap();
     }
 }

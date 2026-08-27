@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f1e8">
+    <meta name="description" content="Catch stale JSON and curl examples against OpenAPI before readers do. A fast, safe CI linter for API documentation.">
+    <title>API Example Linter — Keep docs examples executable</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="manifest" href="/manifest.webmanifest">
+    <link rel="preload" href="/assets/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/assets/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="/src/styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="offline" id="offline" role="status" hidden>You’re offline. The guide and demo still work; install commands need a connection.</div>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="API Example Linter home">
+        <svg aria-hidden="true" viewBox="0 0 40 40" width="40" height="40"><path d="M4 9h10v7H9v8h5v7H4V9Zm32 0H22v7h9v8h-9v7h14V9Z"/><circle cx="18" cy="12.5" r="2"/><circle cx="18" cy="27.5" r="2"/></svg>
+        <span>API Example Linter</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#how">How it works</a>
+        <a href="#demo">Demo</a>
+        <a class="nav-cta" href="https://github.com/B-Divyesh/sf-api-example-linter">GitHub <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span>01</span> Contract-aware documentation</p>
+          <h1 id="hero-title">Catch the example<br>your schema left behind.</h1>
+          <p class="lede">Lint the JSON and curl snippets humans actually copy. One small CI gate connects Markdown, OpenAPI, and clear line-level fixes.</p>
+          <div class="install-line" aria-label="Install command">
+            <code>cargo install --git github.com/…/sf-api-example-linter</code>
+            <button class="copy-button" type="button" data-copy="cargo install --git https://github.com/B-Divyesh/sf-api-example-linter.git"><span>Copy</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M8 8h11v11H8zM5 16H3V3h13v2"/></svg></button>
+          </div>
+          <div class="hero-actions">
+            <a class="button primary" href="#install">Add the CI gate</a>
+            <a class="text-link" href="#demo">Watch a stale field fail <span aria-hidden="true">↓</span></a>
+          </div>
+        </div>
+        <figure class="hero-art">
+          <img src="/assets/contract-loom.webp" width="1536" height="1024" fetchpriority="high" alt="Irregular coral payload fragments pass through a precise indigo schema gate and emerge as ordered mint rows.">
+          <figcaption><span>INPUT / DOCS</span><span>GATE / OPENAPI</span><span>OUTPUT / TRUSTED</span></figcaption>
+        </figure>
+      </section>
+
+      <section class="proof-strip" aria-label="Product principles">
+        <p><span class="status pass" aria-hidden="true">✓</span><strong>Shell-safe</strong> curl is parsed, never run</p>
+        <p><span class="status pass" aria-hidden="true">✓</span><strong>Offline-first</strong> remote refs stay off</p>
+        <p><span class="status pass" aria-hidden="true">✓</span><strong>CI-native</strong> precise annotations</p>
+      </section>
+
+      <section class="section how" id="how" aria-labelledby="how-title">
+        <div class="section-intro">
+          <p class="eyebrow"><span>02</span> The shortest path to trustworthy docs</p>
+          <h2 id="how-title">Examples enter the contract.</h2>
+          <p>No fixture migration. Point the linter at the documentation you already maintain and choose the operation or schema that gives each block meaning.</p>
+        </div>
+        <ol class="steps">
+          <li><span class="step-number">01</span><div><h3>Extract</h3><p>Find fenced JSON and curl bodies in Markdown, plus examples embedded in OpenAPI 3.x.</p></div><code>docs/**/*.md</code></li>
+          <li><span class="step-number">02</span><div><h3>Align</h3><p>Resolve the operation or named schema, including local references and request/response direction.</p></div><code>operation=createPet</code></li>
+          <li><span class="step-number">03</span><div><h3>Explain</h3><p>Return the file, line, JSON pointer, and exact mismatch in text, JSON, or GitHub format.</p></div><code>$/tag · not allowed</code></li>
+        </ol>
+      </section>
+
+      <section class="section demo-section" id="demo" aria-labelledby="demo-title">
+        <div class="section-intro demo-intro">
+          <p class="eyebrow"><span>03</span> Recorded run</p>
+          <h2 id="demo-title">See stale become actionable.</h2>
+          <p>This recording uses the real CLI output contract. Nothing is uploaded, and playback begins only when you ask.</p>
+        </div>
+        <div class="terminal" aria-label="Recorded command-line demonstration">
+          <div class="terminal-bar">
+            <span class="terminal-label">docs/create-pet.md</span>
+            <div class="terminal-actions">
+              <button type="button" id="play-demo">Play recording</button>
+              <button type="button" id="restart-demo">Restart</button>
+            </div>
+          </div>
+          <div class="terminal-screen">
+            <div class="terminal-empty" id="demo-empty">
+              <svg aria-hidden="true" viewBox="0 0 48 48"><path d="m10 24 9 9 19-19"/></svg>
+              <p>Ready to lint 2 examples.</p>
+            </div>
+            <pre id="terminal-output" aria-live="polite" aria-atomic="false" hidden><code></code></pre>
+          </div>
+          <p class="demo-status" id="demo-status" role="status">Recording stopped at the first frame.</p>
+        </div>
+      </section>
+
+      <section class="section formats" aria-labelledby="formats-title">
+        <div class="section-intro">
+          <p class="eyebrow"><span>04</span> Small surface, useful coverage</p>
+          <h2 id="formats-title">The formats between the cracks.</h2>
+        </div>
+        <div class="format-grid">
+          <article><div class="format-mark json-mark" aria-hidden="true">{ }</div><h3>Fenced JSON</h3><p>Validate literal request and response payloads, with optional metadata right on the fence.</p></article>
+          <article><div class="format-mark curl-mark" aria-hidden="true">↳_</div><h3>Safe curl</h3><p>Extract JSON data flags as text. Never invoke a shell, source an environment, or follow a redirect.</p></article>
+          <article><div class="format-mark api-mark" aria-hidden="true">◇</div><h3>OpenAPI examples</h3><p>Check media examples already inside 3.0 and 3.1 documents against their own operation schema.</p></article>
+        </div>
+      </section>
+
+      <section class="section install-section" id="install" aria-labelledby="install-title">
+        <div>
+          <p class="eyebrow"><span>05</span> Five-minute setup</p>
+          <h2 id="install-title">Put copied examples on the build path.</h2>
+          <p>Add one config file and one CI command. When a field drifts, the pull request points to the example that needs repair.</p>
+        </div>
+        <div class="config-block">
+          <div class="code-label"><span>.api-example-linter.json</span><button class="copy-button compact" type="button" data-copy='{"spec":"openapi.yaml","inputs":["docs"],"operation":"createPet","direction":"request"}'><span>Copy</span></button></div>
+          <pre><code>{
+  <span class="key">"spec"</span>: <span class="string">"openapi.yaml"</span>,
+  <span class="key">"inputs"</span>: [<span class="string">"docs"</span>],
+  <span class="key">"operation"</span>: <span class="string">"createPet"</span>,
+  <span class="key">"direction"</span>: <span class="string">"request"</span>
+}</code></pre>
+          <div class="command-row"><code>api-example-linter check --format github</code></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-brand"><span class="brand-mark" aria-hidden="true">[✓]</span><div><strong>API Example Linter</strong><span>Examples should compile, too.</span></div></div>
+      <nav aria-label="Footer navigation"><a href="https://github.com/B-Divyesh/sf-api-example-linter">Source</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></nav>
+      <p>MIT licensed · No telemetry</p>
+    </footer>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
