@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --config site/vite.config.ts",
     "test": "cargo test && npm run test:site",
-    "test:site": "node --test site/tests/*.test.mjs",
+    "test:site": "tsc --noEmit -p site/tsconfig.json && node --test site/tests/*.test.mjs",
     "build": "npm run build:cli && npm run build:site",
     "build:cli": "cargo build --release && mkdir -p dist/bin && cp target/release/api-example-linter dist/bin/",
     "build:site": "vite build --config site/vite.config.ts"

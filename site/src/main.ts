@@ -1,3 +1,5 @@
+export {};
+
 const copyButtons = document.querySelectorAll<HTMLButtonElement>('[data-copy]');
 
 for (const button of copyButtons) {
