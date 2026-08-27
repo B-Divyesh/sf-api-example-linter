@@ -31,7 +31,7 @@ Manual smoke command:
 
 - `npm test`: 8 Rust unit tests, 4 CLI integration tests, 1 Rust doctest, and 5 site contract tests passed.
 - `cargo clippy --all-targets -- -D warnings`: passed.
-- `cargo package --allow-dirty --locked`: passed; 119.4 KiB package, 31.2 KiB compressed.
+- `cargo package --locked`: passed from the committed tree; 118.0 KiB package, 30.9 KiB compressed.
 - Factory URL verifier: HTTP 200, no page/console errors, title/lang/main/alt/button checks passed; desktop and 390×844 screenshots reviewed.
 - Keyboard/mobile smoke: skip link receives first focus, demo runs from Enter, offline status appears, and the 390px page has no horizontal overflow.
 - axe-core/Playwright at 390×844: 0 violations in light mode and 0 in dark mode.
