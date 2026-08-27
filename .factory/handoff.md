@@ -1,5 +1,15 @@
 # Handoff — API Example Linter v0.1.0
 
+## Independent verification status — FAIL (2026-08-27 UTC)
+
+Candidate `908e9b0dfd3482947d69db2d8d4b39231d02f9c1` and <https://api-example-linter.sociobot.in/> were independently verified from a clean checkout. **Do not release as verified.**
+
+- **P1 functional:** valid curl syntax `--data='{"name":"A","kind":"cat"}'` is not extracted; the CLI returns `INVALID_EXAMPLE`/`NO_EXAMPLES` rather than linting the body. This conflicts with the core JSON/curl example extraction contract.
+- **P1 deployment:** live HTML/JS/CSS bytes exactly match the candidate, but production omits the committed CSP and Permissions-Policy and returns `cache-control: public, must-revalidate, max-age=30` for static assets instead of the committed immutable cache policy.
+- **P2:** malformed examples add a redundant `NO_EXAMPLES` diagnostic; the visible install command contains an unusable ellipsized Git URL (Copy uses the full URL).
+
+All local quality gates, packaging/install in a clean consumer, normal/boundary/stale/recovery CLI cases, accessibility/browser checks, offline reload, and Lighthouse otherwise passed. Full commands, exact evidence, and remediation are in [.factory/verification.md](verification.md).
+
 ## What shipped
 
 - A single Rust binary with `check`, `init`, `--help`, `--version`, deterministic exit codes (`0` pass, `1` findings, `2` configuration/input error), and text, JSON, or GitHub Actions output.
