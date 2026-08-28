@@ -53,7 +53,7 @@ It writes the deployable static site to `dist/site`.
 
 ## Exact verification
 
-Fresh clone `/tmp/api-linter-polish-clean-wDgn4l` passed:
+Final fresh clone `/tmp/api-linter-polish-final-cWyFOt` passed:
 
 - all 13 claim commands separately;
 - 9 Rust unit tests;
@@ -66,7 +66,7 @@ Fresh clone `/tmp/api-linter-polish-clean-wDgn4l` passed:
 - release build and Cargo package verification.
 
 `cargo package --locked` produced 19 files.
-The package is 129.0 KiB unpacked and 33.4 KiB compressed.
+The package is 129.1 KiB unpacked and 33.4 KiB compressed.
 
 The final live cold check passed:
 

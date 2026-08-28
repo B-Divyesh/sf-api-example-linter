@@ -36,11 +36,11 @@ No finding is deferred.
 
 ## Verification evidence
 
-- Fresh clone: `/tmp/api-linter-polish-clean-wDgn4l`.
+- Final fresh clone: `/tmp/api-linter-polish-final-cWyFOt`.
 - Every `.factory/claims.json` command: 13/13 passed separately.
 - Full clean-clone suite: 9 Rust unit, 7 CLI integration, 1 doctest, 15 site, 13 claim, and 4 browser tests passed.
 - `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `npm run build`, and `cargo package --locked` passed.
-- Package: 19 files, 129.0 KiB unpacked, 33.4 KiB compressed.
+- Package: 19 files, 129.1 KiB unpacked, 33.4 KiB compressed.
 - Live verifier: 641 ms load, no console errors, one h1, main landmark, `lang=en`, no missing alt text, and no unlabeled buttons.
 - Live axe: zero serious or critical WCAG A/AA findings.
 - Live privacy: zero third-party requests and zero cookies through the cold demo flow.
