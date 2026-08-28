@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f5f1e8">
+  <meta name="description" content="See API Example Linter check two bundled examples without touching your files.">
+  <meta property="og:type" content="website"><meta property="og:site_name" content="API Example Linter">
+  <meta property="og:title" content="Demo — API Example Linter"><meta property="og:description" content="See API Example Linter check two bundled examples without touching your files.">
+  <meta property="og:url" content="https://api-example-linter.sociobot.in/demo/"><meta property="og:image" content="https://api-example-linter.sociobot.in/assets/contract-loom-social.png">
+  <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="Demo — API Example Linter"><meta name="twitter:description" content="See API Example Linter check two bundled examples without touching your files.">
+  <title>Demo — API Example Linter</title>
+  <link rel="canonical" href="https://api-example-linter.sociobot.in/demo/">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="offline" id="offline" role="status" hidden>You are offline. The bundled sample remains available.</div>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="API Example Linter home"><svg aria-hidden="true" viewBox="0 0 40 40" width="40" height="40"><path d="M4 9h10v7H9v8h5v7H4V9Zm32 0H22v7h9v8h-9v7h14V9Z"/><circle cx="18" cy="12.5" r="2"/><circle cx="18" cy="27.5" r="2"/></svg><span>API Example Linter</span></a>
+    <nav aria-label="Primary navigation"><a href="/#how">How it works</a><a href="/demo/" aria-current="page">Demo</a><a href="/privacy/">Privacy</a><a class="nav-cta" href="https://github.com/B-Divyesh/sf-api-example-linter" aria-label="Source on GitHub, external site">GitHub <span aria-hidden="true">↗</span></a></nav>
+  </header>
+  <aside class="demo-banner" data-demo-banner aria-label="Demo status">
+    <strong>Demo — sample data, nothing is saved</strong>
+    <span>This page uses only the bundled sample output.</span>
+    <div><button type="button" data-reset-demo>Reset demo</button><a href="/" data-leave-demo>Start for real</a></div>
+  </aside>
+  <main id="main" class="demo-page">
+    <div class="section-intro">
+      <p class="eyebrow"><span>Demo</span> Isolated sample</p>
+      <h1>Run the bundled linter sample.</h1>
+      <p class="lede">See one current request pass and one stale curl field fail. Your files are never read.</p>
+    </div>
+    <div class="terminal" aria-label="Recording of the bundled command-line demo">
+      <div class="terminal-bar"><span class="terminal-label">api-example-linter demo</span><div class="terminal-actions"><button type="button" id="play-demo">Play recording</button><button type="button" id="restart-demo">Restart recording</button></div></div>
+      <div class="terminal-screen"><div class="terminal-empty" id="demo-empty" hidden><svg aria-hidden="true" viewBox="0 0 48 48"><path d="m10 24 9 9 19-19"/></svg><p>Ready to check two bundled examples.</p></div><pre id="terminal-output" aria-live="polite" aria-atomic="false"><code></code></pre></div>
+      <p class="demo-status" id="demo-status" role="status">Sample result loaded.</p>
+    </div>
+    <section class="demo-command" aria-labelledby="run-title">
+      <h2 id="run-title">Run the same sample locally</h2>
+      <div class="install-line"><code>api-example-linter demo</code><button class="copy-button" type="button" data-copy="api-example-linter demo"><span>Copy command</span></button></div>
+      <p>The command creates a fresh temporary folder. It removes that folder after printing the result.</p>
+    </section>
+  </main>
+  <footer><div class="footer-brand"><span class="brand-mark" aria-hidden="true">[✓]</span><div><strong>API Example Linter</strong><span>Checks documentation examples against OpenAPI.</span></div></div><nav aria-label="Footer navigation"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><a href="https://github.com/B-Divyesh/sf-api-example-linter" aria-label="Source on GitHub, external site">Source ↗</a></nav><p>Built by Param Factory · v0.1.0</p></footer>
+  <div class="route-announcer" aria-live="polite" aria-atomic="true"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

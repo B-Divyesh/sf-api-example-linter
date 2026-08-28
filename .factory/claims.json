@@ -1,0 +1,93 @@
+[
+  {
+    "id": "demo-temp-isolation",
+    "claim": "The CLI demo checks bundled samples in a fresh temporary folder and removes it without reading user configuration.",
+    "where": "README demo, home sample result, demo page",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:demo-temp-isolation",
+    "sandbox": "Run from a temporary working directory containing a hostile user config and sentinel file; assert result, cleanup, and unchanged sentinel."
+  },
+  {
+    "id": "shell-non-execution",
+    "claim": "Curl blocks are parsed as text and never executed.",
+    "where": "README, home proof strip, supported formats, privacy scope",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:shell-non-execution",
+    "sandbox": "Check a curl fence containing a shell file-write payload and assert validation succeeds while the marker is absent."
+  },
+  {
+    "id": "supported-inputs",
+    "claim": "The CLI checks fenced JSON, curl request bodies, and embedded examples in OpenAPI 3.0 and 3.1 files.",
+    "where": "README, home how-it-works and supported input formats",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:supported-inputs",
+    "sandbox": "Run the binary against shipped Markdown fixtures and temporary OpenAPI 3.0 and 3.1 documents; assert discovered and passed totals."
+  },
+  {
+    "id": "schema-mapping",
+    "claim": "Examples can be checked against a named schema or an operation request.",
+    "where": "README usage, home how-it-works",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:schema-mapping",
+    "sandbox": "Run the shipped Markdown fixtures once with --schema and once with --operation and --direction; assert both pass."
+  },
+  {
+    "id": "diagnostic-output",
+    "claim": "Failures identify the file, line, JSON pointer, and mismatch in text, JSON, and GitHub output.",
+    "where": "README output, home how-it-works and CI setup",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:diagnostic-output",
+    "sandbox": "Run the shipped invalid fixture in every format; assert exit 1, file, mismatch, and exact GitHub line annotation."
+  },
+  {
+    "id": "config-init",
+    "claim": "The init command writes a starter configuration and refuses to overwrite an existing file.",
+    "where": "README configuration",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:config-init",
+    "sandbox": "Run init twice against a fresh temporary path; assert the second run exits 2 and leaves the original bytes unchanged."
+  },
+  {
+    "id": "core-schema-checks",
+    "claim": "Version 0.1 checks required fields, unknown fields, scalar types, and local references.",
+    "where": "README scope",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:core-schema-checks",
+    "sandbox": "Run shipped and temporary invalid values against the local-reference schema; assert each exact rule violation."
+  },
+  {
+    "id": "local-by-default",
+    "claim": "Default checks work offline, resolve local references, and never fetch remote references.",
+    "where": "README privacy, home facts and proof strip, privacy page",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:local-by-default",
+    "sandbox": "Point a remote reference at a local probe server; assert zero requests and explicit refusal, then assert a local-reference check passes."
+  },
+  {
+    "id": "mock-host-gating",
+    "claim": "Mock requests run only when requested and require loopback or an explicitly allowed hostname.",
+    "where": "README mock checks, home scope, privacy page",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:mock-host-gating",
+    "sandbox": "Assert an unlisted host is denied, then opt into a temporary loopback server and observe two sample requests."
+  },
+  {
+    "id": "browser-privacy",
+    "claim": "The website uses no analytics, cookies, forms, or third-party runtime requests.",
+    "where": "README website, privacy page",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:browser-privacy",
+    "sandbox": "Record every browser request through the demo flow and assert same-origin only, no cookies, and no localStorage."
+  },
+  {
+    "id": "demo-web-isolation",
+    "claim": "The web demo stores state only under its demo session namespace, and Reset demo leaves non-demo session data untouched.",
+    "where": "demo banner, privacy page, .factory/demo.md",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:demo-web-isolation",
+    "sandbox": "Seed real and demo session keys, reset the demo, and assert only the demo namespace was replaced."
+  },
+  {
+    "id": "offline-site",
+    "claim": "The guide and bundled web demo reload offline after the first visit.",
+    "where": "offline notice, README website, privacy page",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:offline-site",
+    "sandbox": "Load /demo/ in a fresh browser context, wait for service-worker control, go offline, reload, and assert the demo heading."
+  },
+  {
+    "id": "mit-license",
+    "claim": "API Example Linter is free software under the MIT License.",
+    "where": "home facts, README, terms page",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:mit-license",
+    "sandbox": "Assert Cargo metadata declares MIT and the shipped LICENSE contains the MIT permission grant."
+  }
+]

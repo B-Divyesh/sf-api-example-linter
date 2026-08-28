@@ -3,6 +3,7 @@ use api_example_linter::{
     write_starter_config,
 };
 use clap::{Args, Parser, Subcommand};
+use std::fs;
 use std::path::PathBuf;
 
 #[derive(Parser)]
@@ -14,6 +15,8 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
+    /// Run the bundled sample in an isolated temporary folder
+    Demo,
     /// Validate Markdown and OpenAPI examples
     Check(CheckArgs),
     /// Write a starter .api-example-linter.json without overwriting
@@ -60,6 +63,7 @@ struct CheckArgs {
 fn main() {
     let cli = Cli::parse();
     match cli.command {
+        Command::Demo => run_demo(),
         Command::Init { path } => match write_starter_config(&path) {
             Ok(()) => println!("Wrote {}", path.display()),
             Err(error) => {
@@ -69,6 +73,55 @@ fn main() {
         },
         Command::Check(args) => run_check(args),
     }
+}
+
+fn run_demo() {
+    let workspace = match tempfile::Builder::new()
+        .prefix("api-example-linter-demo-")
+        .tempdir()
+    {
+        Ok(value) => value,
+        Err(error) => emit_error(
+            &format!("cannot create demo folder: {error}"),
+            OutputFormat::Text,
+        ),
+    };
+    let docs_dir = workspace.path().join("docs");
+    if let Err(error) = fs::create_dir(&docs_dir)
+        .and_then(|()| {
+            fs::write(
+                workspace.path().join("openapi.yaml"),
+                include_str!("../examples/openapi.yaml"),
+            )
+        })
+        .and_then(|()| {
+            fs::write(
+                docs_dir.join("create-pet.md"),
+                include_str!("../examples/create-pet.md"),
+            )
+        })
+    {
+        emit_error(&format!("cannot prepare demo: {error}"), OutputFormat::Text);
+    }
+
+    println!("Demo — bundled sample data in a temporary folder");
+    println!("Temporary folder: {}", workspace.path().display());
+    println!("$ api-example-linter demo\n");
+    let options = CheckOptions {
+        inputs: vec![docs_dir.join("create-pet.md")],
+        spec: Some(workspace.path().join("openapi.yaml")),
+        operation: Some("createPet".into()),
+        schema: None,
+        direction: Some(api_example_linter::Direction::Request),
+        format: OutputFormat::Text,
+        mock_base_url: None,
+        allow_hosts: Vec::new(),
+    };
+    match check(&options) {
+        Ok(report) => print!("{}", render_report(&report, OutputFormat::Text)),
+        Err(error) => emit_error(&error.message, OutputFormat::Text),
+    }
+    println!("Demo complete. The temporary folder is removed now.");
 }
 
 fn run_check(args: CheckArgs) {

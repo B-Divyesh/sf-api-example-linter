@@ -1,0 +1,1 @@
+Lint JSON and curl documentation examples against OpenAPI before they reach readers.

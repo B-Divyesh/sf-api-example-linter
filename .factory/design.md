@@ -48,6 +48,8 @@ On entry, geometry resolves from scattered nodes to aligned rows over 600ms. The
 ## Asset plan and provenance
 
 - `site/public/assets/contract-loom.webp`: generated specifically for this product with `/opt/fleet/lib/gen-image.sh` using the factory `factory-image` deployment, then converted locally to WebP at ≤300 KB. Prompt: “Editorial generative geometry for an API developer tool: on warm ivory drafting paper, irregular coral JSON-like data tiles and small circular nodes travel left-to-right along thin navy connector lines, pass through a precise indigo rectangular schema gate at center, and emerge as orderly mint aligned rows; flat screenprint/plotter aesthetic, subtle paper grain, crisp geometric shapes, wide landscape composition, strong negative space, no words, no letters, no logos, no UI screenshot, no gradients, no watermark.” License: original project asset under this repository’s MIT license.
+- `site/public/assets/contract-loom-social.png`: a 1200×630 local crop of the original Contract Loom art for link previews. No new generative model was used.
+- `site/public/apple-touch-icon.png`: a hand-drawn raster version of the repository SVG gate mark, using the documented palette.
 - Grid, arrow, and status marks are hand-authored CSS/SVG primitives in the site source and inherit the repository MIT license.
 
 The generated image is meaningful; its alt text explains the input → gate → aligned-output concept. Decorative micro-geometry is hidden from assistive technology.

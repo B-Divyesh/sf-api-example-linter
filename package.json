@@ -5,13 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite --config site/vite.config.ts",
-    "test": "cargo test && npm run test:site",
-    "test:site": "tsc --noEmit -p site/tsconfig.json && node --test site/tests/*.test.mjs",
+    "test": "cargo test && npm run test:site && npm run test:claims && npm run test:browser",
+    "test:site": "tsc --noEmit -p site/tsconfig.json && node --test site/tests/site.test.mjs",
+    "test:claims": "cargo build --quiet && npm run build:site --silent && node site/tests/run-claims.mjs",
+    "test:browser": "npm run build:site --silent && node --test --test-concurrency=1 site/tests/browser.test.mjs",
     "build": "npm run build:cli && npm run build:site",
     "build:cli": "cargo build --release && mkdir -p dist/bin && cp target/release/api-example-linter dist/bin/",
     "build:site": "vite build --config site/vite.config.ts"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
+    "playwright": "1.58.2",
     "typescript": "^5.9.2",
     "vite": "^7.1.3"
   }

@@ -134,3 +134,32 @@ fn configuration_errors_return_two() {
     assert_eq!(output.status.code(), Some(2));
     assert!(String::from_utf8_lossy(&output.stderr).contains("CONFIGURATION_ERROR"));
 }
+
+#[test]
+fn demo_uses_real_linter_and_removes_its_temporary_workspace() {
+    let current = tempfile::tempdir().unwrap();
+    let sentinel = current.path().join("real-user-file.txt");
+    fs::write(&sentinel, "keep me").unwrap();
+    fs::write(
+        current.path().join(".api-example-linter.json"),
+        r#"{"inputs":["missing-real-path"]}"#,
+    )
+    .unwrap();
+
+    let output = binary()
+        .current_dir(current.path())
+        .arg("demo")
+        .output()
+        .unwrap();
+    assert!(output.status.success());
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    assert!(stdout.contains("$ api-example-linter demo"));
+    assert!(stdout.contains("SCHEMA_MISMATCH"));
+    assert!(stdout.contains("2 example(s) checked · 1 passed · 1 failed"));
+    assert_eq!(fs::read_to_string(&sentinel).unwrap(), "keep me");
+    let workspace = stdout
+        .lines()
+        .find_map(|line| line.strip_prefix("Temporary folder: "))
+        .expect("demo prints its temporary folder");
+    assert!(!std::path::Path::new(workspace).exists());
+}

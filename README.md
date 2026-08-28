@@ -1,20 +1,35 @@
 # API Example Linter
 
-`api-example-linter` keeps the request and response examples people copy from API documentation aligned with the OpenAPI contract. It extracts fenced JSON and curl bodies from Markdown, reads examples embedded in OpenAPI 3.x documents, validates them against a selected operation or named schema, and emits concise local diagnostics or line-level GitHub Actions annotations.
+`api-example-linter` checks copied API examples against an OpenAPI contract.
+It reads fenced JSON, curl request bodies, and examples inside OpenAPI 3.x files.
+Failed checks name the file, line, JSON pointer, and mismatch.
 
-It is built for API maintainers who want one small, deterministic CI gate—not a documentation host, API fuzzer, or shell runner. Curl blocks are parsed as text and are **never executed**.
+It is for API maintainers who want documentation examples checked in CI.
+Curl blocks are parsed as text and never executed.
+
+## Try the bundled sample
+
+Open the [isolated web demo](https://api-example-linter.sociobot.in/?demo=1), or run:
+
+```sh
+api-example-linter demo
+```
+
+The command copies [examples](examples/) into a fresh temporary folder.
+It runs the real validator against one current example and one stale example.
+It then removes the folder without reading project configuration.
 
 ## Install
 
-Download a release binary, or install from source with Rust 1.85+:
+Download a release binary, or install from source with Rust 1.85 or newer:
 
 ```sh
-cargo install --path .
+cargo install --git https://github.com/B-Divyesh/sf-api-example-linter.git
 ```
 
 ## Usage
 
-Validate examples from Markdown against a named component schema:
+Check Markdown against a named component schema:
 
 ```sh
 api-example-linter check docs/quickstart.md \
@@ -22,7 +37,7 @@ api-example-linter check docs/quickstart.md \
   --schema Pet
 ```
 
-Validate request examples against an operation:
+Check request examples against an operation:
 
 ```sh
 api-example-linter check docs/create-pet.md \
@@ -31,26 +46,32 @@ api-example-linter check docs/create-pet.md \
   --direction request
 ```
 
-Validate examples already embedded in an OpenAPI file:
+Check examples embedded in an OpenAPI file:
 
 ```sh
 api-example-linter check openapi.yaml --operation createPet
 ```
 
-Machine-readable and GitHub Actions output:
+Use JSON or GitHub Actions output:
 
 ```sh
 api-example-linter check docs --spec openapi.yaml --schema Pet --format json
 api-example-linter check docs --spec openapi.yaml --schema Pet --format github
 ```
 
-In `auto` format, the CLI emits GitHub workflow commands when `GITHUB_ACTIONS=true`; otherwise it uses readable terminal output. Exit code `0` means every discovered example passed, `1` means validation findings were found, and `2` means configuration or input failed.
+Text, JSON, and GitHub output identify each failed example.
+Exit code `0` means all examples passed.
+Exit code `1` means validation findings exist.
+Exit code `2` means the input or configuration is invalid.
 
 ### Markdown conventions
 
-JSON fences are validated directly. Curl fences are parsed safely; JSON bodies following `--data`, `--data-raw`, `--data-binary`, or `-d` are extracted in their normal separated, `--flag=VALUE`, and compact `-dVALUE` forms. No command is run.
+JSON fences are validated directly.
+Curl fences support `--data`, `--data-raw`, `--data-binary`, and `-d`.
+Separated, equals, and compact flag forms are accepted.
+No shell command is run.
 
-To map a block to an operation without global flags, add metadata to the fence:
+Add mapping metadata to a fence when global flags are not suitable:
 
 ````md
 ```json operation=createPet direction=request
@@ -58,11 +79,15 @@ To map a block to an operation without global flags, add metadata to the fence:
 ```
 ````
 
-Supported metadata keys are `operation`, `schema`, and `direction` (`request` or `response`). A global `--operation`, `--schema`, or `--direction` supplies defaults.
+Metadata keys are `operation`, `schema`, and `direction`.
+Direction can be `request` or `response`.
+Global flags provide defaults for those values.
 
-### Optional safe HTTP check
+### Optional mock request
 
-`--mock-base-url` sends validated request examples to a mock server using the selected operation method and path. It accepts `http://localhost`, `http://127.0.0.1`, and `http://[::1]` by default. Add `--allow-host example.internal` explicitly for another hostname. Redirects are disabled, private credentials are never inferred, and curl text is still never executed.
+`--mock-base-url` sends validated requests to a mock server only after you opt in.
+Loopback HTTP hosts are accepted by default.
+Use `--allow-host` to permit another hostname.
 
 ```sh
 api-example-linter check docs/create-pet.md \
@@ -72,7 +97,7 @@ api-example-linter check docs/create-pet.md \
 
 ### Configuration
 
-Put `.api-example-linter.json` at the repository root to keep CI under five minutes:
+Put `.api-example-linter.json` at the repository root:
 
 ```json
 {
@@ -84,7 +109,8 @@ Put `.api-example-linter.json` at the repository root to keep CI under five minu
 }
 ```
 
-CLI flags override configuration. Run `api-example-linter init` to write a documented starter file without overwriting an existing one.
+CLI flags override configuration.
+`api-example-linter init` writes a starter file and refuses to overwrite an existing file.
 
 ## CI
 
@@ -93,23 +119,39 @@ CLI flags override configuration. Run `api-example-linter init` to write a docum
   run: api-example-linter check --format github
 ```
 
+## Privacy and offline behavior
+
+Default checks use local files and make no network requests.
+Local references resolve without remote fetching.
+The optional mock request is the only CLI network path.
+
+The website makes only same-origin requests and sets no cookies.
+Its service worker keeps the guide and bundled demo available after the first visit.
+The demo uses a separate `demo:` session-storage namespace.
+
 ## Develop and verify
 
 ```sh
-cargo test
-cargo build --release
-cargo package --allow-dirty
-npm install
+npm ci
 npm test
-npm run build       # binary + site -> dist/
-npm run build:site  # static site only -> dist/site/
+npm run build
+cargo fmt --check
+cargo clippy --all-targets -- -D warnings
+cargo package --locked
 ```
 
-The static documentation site is deployed from `dist/site`. It has no analytics, external scripts, hosted fonts, cookies, or data collection; the live demo runs entirely in the browser.
+`npm test` runs Rust, site, claim, browser, accessibility, privacy, and offline checks.
+`npm run build` writes the binary to `dist/bin` and the static site to `dist/site`.
+`npm run build:site` builds only the static site.
+
+Every visitor-facing claim is mapped to one tagged test in [.factory/claims.json](.factory/claims.json).
+The [demo contract](.factory/demo.md) documents isolation and reset behavior.
 
 ## Scope
 
-Version 0.1 validates the practical JSON Schema subset commonly used by OpenAPI examples: types, required properties, properties, additional properties, arrays/items, enums, const, nullable, string patterns/lengths, numeric bounds, composition (`allOf`, `anyOf`, `oneOf`, `not`), and local `$ref` values. OpenAPI 3.0 `nullable` and 3.1 JSON Schema are accepted. Remote `$ref` fetching is intentionally disabled for deterministic, offline-safe CI.
+Version 0.1 checks JSON values against the selected OpenAPI operation or named schema.
+It checks required fields, unknown fields, scalar types, and local references.
+Remote references are reported instead of fetched.
 
 ## License
 
