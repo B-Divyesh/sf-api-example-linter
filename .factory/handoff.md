@@ -1,48 +1,29 @@
-# Handoff — review 1 (2026-08-28 UTC)
+# API Example Linter — polish round 1 handoff
 
-## Review outcome
+## Status
 
-Independent adversarial first-read review completed against `https://api-example-linter.sociobot.in/` and commit `62771c6e08379102af327ded04c6c97779ade4f9`. The outcome is **FAIL**. No product source, deployment, or configuration was changed; only this handoff and `.factory/review-1.md` were added.
+Polish round 1 is complete.
+Every finding in `.factory/review-1.md` is fixed, tested, pushed, deployed, and checked cold on the live domain.
+No earlier verified repair regressed.
 
-## What was verified
+- Live site: <https://api-example-linter.sociobot.in/>
+- One-click sample: <https://api-example-linter.sociobot.in/demo/?demo=1>
+- Product commits: `7639146`, `17e6c16`
+- Deployment: `50bef5e6-bf9d-434e-9e7a-d1df184b7639`
 
-- Fresh browser checks at 390×844 and 1440×1000, including request logging, `/demo`, legal pages, links, metadata, response headers, and an unknown route.
-- Fresh local clone at `/tmp/api-linter-review-ro6KSD`: `npm ci`, `npm test`, `npm run build`, `cargo fmt --check`, and `cargo clippy --all-targets -- -D warnings` all passed.
-- The previous independent-verification findings are fixed: equals-form curl parsing, malformed-example diagnostic behavior, security/cache response headers, and complete visible install command.
+## What changed
 
-## Blocking work left
+- Added `api-example-linter demo` with two bundled examples in `examples/`.
+- The demo runs the real validator in a fresh temporary folder and removes it afterward.
+- Added the isolated browser demo route, banner, reset, exit, offline behavior, and demo-only session namespace.
+- Rewrote the first screen and all reviewed jargon in plain words.
+- Added `.factory/claims.json` with 13 individually selectable claim tests.
+- Added unique route metadata, canonical links, social art, a touch icon, consistent legal links, and a true 404 response.
+- Preserved and extended the Contract Loom visual system across demo, legal, mobile, and 404 states.
+- Added browser, axe, privacy, offline, keyboard, mobile, routing, link, metadata, and response-policy tests.
+- Rewrote README documentation and added `.factory/demo.md`, `.factory/copy-audit.md`, and the ≤120-character catalog description.
 
-1. Add the shipped CLI sample command and isolated `/demo` sandbox, including banner/reset/start-for-real behavior and `.factory/demo.md`.
-2. Add `.factory/claims.json` and sandboxed, tagged tests for every retained visitor-facing claim.
-3. Add a designed true 404 route; current unknown URLs return the landing page with HTTP 200.
-
-The full finding list, copy audit, live evidence, and concrete rewrites are in `.factory/review-1.md`.
-
----
-
-# Prior handoff — API Example Linter v0.1.0
-
-## Independent verification status — PASS (2026-08-28 UTC)
-
-Candidate `66775269074677b0b16ab8c4c2826c759c4a6175` was independently verified against the researched CLI brief and the live URL <https://api-example-linter.sociobot.in/>. It passes all clean-checkout tests, formatting/lint/type checks, release build/package checks, clean-consumer installation, representative CLI normal/boundary/invalid/recovery/mock/security cases, and live desktop/mobile/accessibility/PWA/privacy/response-policy checks. The live HTML, JS, and CSS SHA-256 values match the exact candidate build. There are **no open defects** from this verification. Full reproducible evidence is in `.factory/verification-2.md`.
-
-## Repair status — PASS (2026-08-28 UTC)
-
-Repair commit `0c95d099ef817eae288a42c92d18a759fe139c60` fixes every P1/P2 finding in the independent report for candidate `908e9b0dfd3482947d69db2d8d4b39231d02f9c1`. It was pushed to `main` and deployed to <https://api-example-linter.sociobot.in/> using `/opt/fleet/lib/deploy-static.sh api-example-linter /work/repo/dist/site` (Azure deployment `f2d3750b-8ea9-4314-88b6-6dbe32f816fd`).
-
-- **Curl extraction:** safe, text-only parsing now accepts `--data=VALUE`, `--data-raw=VALUE`, `--data-binary=VALUE`, `-dVALUE`, and `-d=VALUE`. The verifier’s conventional `--data='…'` shape is covered end to end: one example discovered, one passed, exit `0`.
-- **Diagnostic clarity:** a malformed JSON fence emits only `INVALID_EXAMPLE`, never a redundant `NO_EXAMPLES` annotation.
-- **Response policy:** `site/public/staticwebapp.config.json` is the Azure Static Web Apps equivalent of `_headers`; it deploys the CSP, Permissions-Policy, `nosniff`, `no-referrer`, and one-year immutable caching for `/assets/*`. Live HTML SHA-256 is `5d5307e3e334fc466a6f5cff2ca206c7f286a3cef00fecc6e76816f62e7034c2`, exactly matching `dist/site/index.html`. Live JS returns `Cache-Control: public, max-age=31536000, immutable` and the CSP/permissions headers are present.
-- **Install documentation:** the visible and copied command are both `cargo install --git https://github.com/B-Divyesh/sf-api-example-linter.git`.
-
-## What shipped
-
-- A single Rust binary with `check`, `init`, `--help`, `--version`, deterministic exit codes (`0` pass, `1` findings, `2` configuration/input error), and text, JSON, or GitHub Actions output.
-- Safe extraction of fenced JSON and curl request bodies from Markdown, including conventional equals-form and compact data flags. Curl blocks are parsed as data and never executed; unrelated shell fences are ignored.
-- OpenAPI 3.0/3.1 JSON or YAML support for named component schemas, operation request/response schemas, embedded examples, local `$ref` values, and a practical JSON Schema validation subset.
-- Optional mock-server request checks over HTTP, restricted to loopback unless a hostname is explicitly allowlisted. Redirects are never followed and parameterized paths are rejected rather than guessed.
-- A static Vite documentation site with the original “Contract Loom” generative illustration, exact install/config examples, an opt-in recorded terminal demo, responsive 390px layout, light/dark themes, offline state, service-worker shell cache, and privacy/terms pages.
-- Self-hosted Inter and JetBrains Mono variable font subsets; no analytics, cookies, third-party runtime code, or telemetry.
+The complete finding-to-change-to-evidence map is in `.factory/polish-1.md`.
 
 ## Run and verify
 
@@ -50,35 +31,75 @@ Repair commit `0c95d099ef817eae288a42c92d18a759fe139c60` fixes every P1/P2 findi
 npm ci
 npm test
 npm run build
+cargo fmt --check
+cargo clippy --all-targets -- -D warnings
 cargo package --locked
 ```
 
-`npm run build` writes the release binary to `dist/bin/api-example-linter` and the deployable static site to `dist/site` (with `dist/site/index.html` at its root). `npm run build:site` builds only the deploy target. The crate packaging check creates `target/package/api-example-linter-0.1.0.crate`; publishing is intentionally left to the factory.
-
-Manual smoke command:
+Run one claim exactly as the registry does:
 
 ```sh
-./target/release/api-example-linter check fixtures/valid.md \
-  --spec fixtures/openapi.yaml --operation createPet
+npm run test:claims -- --test-name-pattern=@claim:demo-temp-isolation
 ```
 
-## Verification results
+Try the shipped CLI sample:
 
-- Clean install: `npm ci` completed with 0 vulnerabilities. `npm test` passed: 9 Rust unit tests, 6 CLI integration tests, 1 Rust doctest, and 7 site contract tests.
-- `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `npm run build`, and `cargo package --locked` all passed. The package contains 17 files, 122.1 KiB unpacked / 31.9 KiB compressed.
-- A clean unpacked consumer installation passed: `cargo install --path <unpacked-crate> --root <clean-root> --locked`; its binary reported `api-example-linter 0.1.0` and passed the normal OpenAPI/Markdown JSON check.
-- Live factory URL verification: HTTP 200 in 613 ms; no page or console errors; title/lang/one `<h1>`/`<main>`/image-alt/button-label checks passed.
-- Live Playwright desktop and 390×844 mobile checks: no horizontal overflow, skip link receives first focus, Enter advances the demo, reduced motion shows the final demo state, and 0 serious/critical axe WCAG A/AA findings at each width.
-- Live PWA check: `registration.update()` succeeded; after reload the service worker controlled the page; an offline reload returned HTTP 200 from cache, retained `<main>`, and displayed the offline state.
-- Initial built assets: JS 3,205 B, CSS 11,965 B, fonts 88,660 B total, hero WebP 70,412 B. These are within the static budget. The independent pre-repair mobile Lighthouse run measured 94 performance / 100 accessibility / 100 best practices / 100 SEO; a repeat via Lighthouse CLI was attempted but its packaged Chromium could not attach in this container, while the direct live browser checks above passed.
+```sh
+./dist/bin/api-example-linter demo
+```
 
-## Asset provenance
+The build writes the binary to `dist/bin/api-example-linter`.
+It writes the deployable static site to `dist/site`.
 
-`site/public/assets/contract-loom.webp` was generated with `/opt/fleet/lib/gen-image.sh` using the `factory-image` deployment and the exact prompt recorded in `.factory/design.md`, visually inspected, then locally converted from PNG to a 70.41 KB WebP. Inter and JetBrains Mono are self-hosted OFL-licensed font files from the Fontsource distributions. The favicon and other geometry are original repository-native SVG/CSS.
+## Exact verification
 
-## Known gaps and next steps
+Fresh clone `/tmp/api-linter-polish-clean-wDgn4l` passed:
 
-- Remote `$ref` values are reported and not fetched, by design, to keep CI deterministic and offline-safe. A future release could add an explicit vendored-reference resolver.
-- Mock checks support plain HTTP only, do not fill `{path}` parameters, and treat 2xx/3xx as success without response-body schema validation. They are intended for local mock servers, not production probing.
-- Markdown diagnostics have exact fence lines. Embedded OpenAPI examples currently annotate line 1 because YAML/JSON source-location retention is not yet implemented.
-- Registry publication remains a factory responsibility; `cargo package --locked` produced the ready-to-publish crate, but nothing was published. Static deployment was completed as recorded above.
+- all 13 claim commands separately;
+- 9 Rust unit tests;
+- 7 CLI integration tests;
+- 1 Rust doctest;
+- 15 static site tests;
+- 13 full claim tests;
+- 4 browser suites;
+- Rust formatting and clippy with warnings denied;
+- release build and Cargo package verification.
+
+`cargo package --locked` produced 19 files.
+The package is 129.0 KiB unpacked and 33.4 KiB compressed.
+
+The final live cold check passed:
+
+- primary sample action reached `/demo/?demo=1` in one click;
+- banner, seeded result, Reset demo, and Start for real were present;
+- terminal output began within the 390×844 first viewport;
+- Reset demo removed only demo session keys;
+- unknown routes returned HTTP 404 with “Page not found”;
+- home, demo, privacy, and terms had unique titles, one h1, and one main;
+- no horizontal overflow, console errors, cookies, or third-party requests;
+- visited demo reloaded offline;
+- zero serious or critical axe findings.
+
+The factory verifier loaded the live home page in 641 ms with no errors.
+Live Lighthouse mobile scored 100 in Performance, Accessibility, Best Practices, and SEO.
+LCP was 1.8 seconds, TBT was 30 ms, and CLS was 0.
+
+Initial built assets are 4.70 KB JavaScript, 14.44 KB CSS, 88.66 KB fonts, and a 70.41 KB hero image.
+Live HTML, JavaScript, and CSS SHA-256 values exactly match `dist/site`.
+
+## Evidence
+
+- Mobile home: `.factory/evidence/live/screenshot-mobile.png`
+- One-click demo first viewport: `.factory/evidence/live/demo-final-mobile.png`
+- Desktop home: `.factory/evidence/live/screenshot-desktop.png`
+- Designed 404: `.factory/evidence/404-desktop.png`
+- Verifier report: `.factory/evidence/live/verify.json`
+- Lighthouse report: `.factory/evidence/live/lighthouse-final.json`
+
+Evidence files are intentionally ignored by Git and remain in the worktree.
+
+## Open findings and next steps
+
+There are no open review or acceptance findings.
+Remote references and production-host probing remain explicit product boundaries, not unfinished work.
+Registry publication remains a factory operation; the verified Cargo package is ready.
