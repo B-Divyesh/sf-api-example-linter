@@ -1,4 +1,26 @@
-# Handoff — API Example Linter v0.1.0
+# Handoff — review 1 (2026-08-28 UTC)
+
+## Review outcome
+
+Independent adversarial first-read review completed against `https://api-example-linter.sociobot.in/` and commit `62771c6e08379102af327ded04c6c97779ade4f9`. The outcome is **FAIL**. No product source, deployment, or configuration was changed; only this handoff and `.factory/review-1.md` were added.
+
+## What was verified
+
+- Fresh browser checks at 390×844 and 1440×1000, including request logging, `/demo`, legal pages, links, metadata, response headers, and an unknown route.
+- Fresh local clone at `/tmp/api-linter-review-ro6KSD`: `npm ci`, `npm test`, `npm run build`, `cargo fmt --check`, and `cargo clippy --all-targets -- -D warnings` all passed.
+- The previous independent-verification findings are fixed: equals-form curl parsing, malformed-example diagnostic behavior, security/cache response headers, and complete visible install command.
+
+## Blocking work left
+
+1. Add the shipped CLI sample command and isolated `/demo` sandbox, including banner/reset/start-for-real behavior and `.factory/demo.md`.
+2. Add `.factory/claims.json` and sandboxed, tagged tests for every retained visitor-facing claim.
+3. Add a designed true 404 route; current unknown URLs return the landing page with HTTP 200.
+
+The full finding list, copy audit, live evidence, and concrete rewrites are in `.factory/review-1.md`.
+
+---
+
+# Prior handoff — API Example Linter v0.1.0
 
 ## Independent verification status — PASS (2026-08-28 UTC)
 
