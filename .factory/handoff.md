@@ -1,5 +1,9 @@
 # Handoff — API Example Linter v0.1.0
 
+## Independent verification status — PASS (2026-08-28 UTC)
+
+Candidate `66775269074677b0b16ab8c4c2826c759c4a6175` was independently verified against the researched CLI brief and the live URL <https://api-example-linter.sociobot.in/>. It passes all clean-checkout tests, formatting/lint/type checks, release build/package checks, clean-consumer installation, representative CLI normal/boundary/invalid/recovery/mock/security cases, and live desktop/mobile/accessibility/PWA/privacy/response-policy checks. The live HTML, JS, and CSS SHA-256 values match the exact candidate build. There are **no open defects** from this verification. Full reproducible evidence is in `.factory/verification-2.md`.
+
 ## Repair status — PASS (2026-08-28 UTC)
 
 Repair commit `0c95d099ef817eae288a42c92d18a759fe139c60` fixes every P1/P2 finding in the independent report for candidate `908e9b0dfd3482947d69db2d8d4b39231d02f9c1`. It was pushed to `main` and deployed to <https://api-example-linter.sociobot.in/> using `/opt/fleet/lib/deploy-static.sh api-example-linter /work/repo/dist/site` (Azure deployment `f2d3750b-8ea9-4314-88b6-6dbe32f816fd`).
