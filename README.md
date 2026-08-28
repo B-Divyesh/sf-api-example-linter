@@ -48,7 +48,7 @@ In `auto` format, the CLI emits GitHub workflow commands when `GITHUB_ACTIONS=tr
 
 ### Markdown conventions
 
-JSON fences are validated directly. Curl fences are parsed safely; only a JSON body following `--data`, `--data-raw`, `--data-binary`, or `-d` is extracted. No command is run.
+JSON fences are validated directly. Curl fences are parsed safely; JSON bodies following `--data`, `--data-raw`, `--data-binary`, or `-d` are extracted in their normal separated, `--flag=VALUE`, and compact `-dVALUE` forms. No command is run.
 
 To map a block to an operation without global flags, add metadata to the fence:
 

@@ -29,3 +29,23 @@ test('runtime uses no third-party analytics or font hosts', () => {
     assert.doesNotMatch(source, /fonts\.googleapis|fonts\.gstatic|googletag|segment\.io/i);
   }
 });
+
+test('visible install command is the exact executable command copied by the control', () => {
+  const html = readFileSync('site/index.html', 'utf8');
+  const command = 'cargo install --git https://github.com/B-Divyesh/sf-api-example-linter.git';
+  assert.match(html, new RegExp(`<code>${command}</code>`));
+  assert.match(html, new RegExp(`data-copy="${command}"`));
+  assert.doesNotMatch(html, /github\.com\/…/);
+});
+
+test('Azure deployment config enforces the documented response policy and asset caching', () => {
+  const config = JSON.parse(readFileSync('site/public/staticwebapp.config.json', 'utf8'));
+  assert.equal(config.globalHeaders['X-Content-Type-Options'], 'nosniff');
+  assert.equal(config.globalHeaders['Referrer-Policy'], 'no-referrer');
+  assert.match(config.globalHeaders['Permissions-Policy'], /camera=\(\)/);
+  assert.match(config.globalHeaders['Content-Security-Policy'], /default-src 'self'/);
+  assert.deepEqual(config.routes, [{
+    route: '/assets/*',
+    headers: { 'Cache-Control': 'public, max-age=31536000, immutable' }
+  }]);
+});

@@ -294,7 +294,10 @@ pub fn check(options: &CheckOptions) -> Result<Report, AppError> {
             report.summary.failed += 1;
         }
     }
-    if report.summary.discovered == 0 {
+    // An invalid fenced example is still an example the maintainer needs to fix.
+    // Do not obscure that actionable diagnostic with a second, misleading
+    // "NO_EXAMPLES" annotation.
+    if report.summary.discovered == 0 && report.diagnostics.is_empty() {
         report.diagnostics.push(Diagnostic {
             severity: Severity::Error,
             code: "NO_EXAMPLES".into(),
@@ -493,32 +496,59 @@ fn parse_curl_body(raw: &str) -> Result<Value, String> {
             "shell fence is ignored unless it starts with curl; use a curl or json fence".into(),
         );
     }
-    let flags = ["--data-raw", "--data-binary", "--data", "-d"];
-    let mut found = None;
-    for flag in flags {
-        if let Some(pos) = find_token(&normalized, flag) {
-            found = Some((pos, flag.len()));
-            break;
-        }
-    }
-    let Some((pos, len)) = found else {
+    let Some(tail) = find_curl_data_tail(&normalized) else {
         return Err("curl example has no JSON body; add --data or -d".into());
     };
-    let tail = normalized[pos + len..].trim_start();
     let body = take_shell_value(tail)?;
     serde_json::from_str(&body).map_err(|e| format!("curl request body is not valid JSON: {e}"))
 }
 
-fn find_token(text: &str, token: &str) -> Option<usize> {
-    text.match_indices(token).find_map(|(i, _)| {
-        let before = text[..i].chars().next_back();
-        let after = text[i + token.len()..].chars().next();
-        if before.is_none_or(char::is_whitespace) && after.is_none_or(char::is_whitespace) {
-            Some(i)
-        } else {
-            None
+/// Return the body portion of the first supported curl data argument.
+///
+/// This deliberately recognizes only a small, literal subset of curl syntax.
+/// It never invokes a shell: quoted values are read by `take_shell_value` below.
+fn find_curl_data_tail(text: &str) -> Option<&str> {
+    let mut earliest: Option<(usize, &str)> = None;
+    for flag in ["--data-raw", "--data-binary", "--data"] {
+        for (position, _) in text.match_indices(flag) {
+            if !is_shell_token_start(text, position) {
+                continue;
+            }
+            let rest = &text[position + flag.len()..];
+            let Some(tail) = rest.strip_prefix('=').or_else(|| {
+                rest.chars()
+                    .next()
+                    .filter(|ch| ch.is_whitespace())
+                    .map(|_| rest.trim_start())
+            }) else {
+                continue;
+            };
+            if earliest.is_none_or(|(first, _)| position < first) {
+                earliest = Some((position, tail));
+            }
         }
-    })
+    }
+
+    // curl accepts compact short data flags such as -d'{"name":"Ada"}'.
+    // Treat an optional '=' as a separator too, matching the long forms.
+    for (position, _) in text.match_indices("-d") {
+        if !is_shell_token_start(text, position) {
+            continue;
+        }
+        let rest = &text[position + 2..];
+        let tail = rest.strip_prefix('=').unwrap_or(rest).trim_start();
+        if earliest.is_none_or(|(first, _)| position < first) {
+            earliest = Some((position, tail));
+        }
+    }
+    earliest.map(|(_, tail)| tail)
+}
+
+fn is_shell_token_start(text: &str, position: usize) -> bool {
+    text[..position]
+        .chars()
+        .next_back()
+        .is_none_or(char::is_whitespace)
 }
 
 fn take_shell_value(text: &str) -> Result<String, String> {
@@ -1320,6 +1350,23 @@ components:
         assert_eq!(examples.len(), 2);
         assert!(diagnostics.is_empty());
         assert_eq!(examples[1].value["name"], "Bo");
+    }
+
+    #[test]
+    fn extracts_equals_and_compact_curl_data_forms_without_shelling_out() {
+        for command in [
+            "curl --data='{\"name\":\"Ada\"}' https://example.invalid/pets",
+            "curl --data-raw='{\"name\":\"Ada\"}' https://example.invalid/pets",
+            "curl --data-binary='{\"name\":\"Ada\"}' https://example.invalid/pets",
+            "curl -d'{\"name\":\"Ada\"}' https://example.invalid/pets",
+            "curl -d='{\"name\":\"Ada\"}' https://example.invalid/pets",
+        ] {
+            assert_eq!(
+                parse_curl_body(command).unwrap()["name"],
+                "Ada",
+                "{command}"
+            );
+        }
     }
 
     #[test]
