@@ -117,6 +117,11 @@ if (isDemo) {
   if (params.get('demo') === '1') document.title = 'Demo — API Example Linter';
   showSeededResult();
   document.querySelector<HTMLElement>('.route-announcer')!.textContent = 'Demo loaded with bundled sample data.';
+  if (params.get('demo') === '1' && location.pathname === '/') {
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+      document.querySelector<HTMLElement>('#sample-result')?.scrollIntoView({ block: 'start' });
+    }));
+  }
 }
 
 document.querySelector<HTMLButtonElement>('[data-reset-demo]')?.addEventListener('click', () => {

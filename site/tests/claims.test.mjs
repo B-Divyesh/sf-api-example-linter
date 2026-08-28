@@ -167,7 +167,7 @@ test('@claim:browser-privacy demo flow makes only same-origin requests and sets 
   const page = await context.newPage();
   const requests = [];
   page.on('request', request => requests.push(request.url()));
-  await page.goto(site.origin + '/?demo=1#sample-result');
+  await page.goto(site.origin + '/demo/?demo=1');
   await page.getByRole('button', { name: 'Reset demo' }).click();
   assert.ok(requests.length > 0);
   assert.ok(requests.every(url => new URL(url).origin === site.origin), requests.join('\n'));
@@ -180,7 +180,7 @@ test('@claim:browser-privacy demo flow makes only same-origin requests and sets 
 test('@claim:demo-web-isolation reset removes only demo session data', async () => {
   const context = await browser.newContext();
   const page = await context.newPage();
-  await page.goto(site.origin + '/?demo=1#sample-result');
+  await page.goto(site.origin + '/demo/?demo=1');
   await page.evaluate(() => {
     sessionStorage.setItem('real:user-setting', 'keep');
     sessionStorage.setItem('demo:api-example-linter:old', 'remove');

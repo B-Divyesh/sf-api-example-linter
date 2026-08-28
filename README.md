@@ -9,7 +9,7 @@ Curl blocks are parsed as text and never executed.
 
 ## Try the bundled sample
 
-Open the [isolated web demo](https://api-example-linter.sociobot.in/?demo=1), or run:
+Open the [isolated web demo](https://api-example-linter.sociobot.in/demo/?demo=1), or run:
 
 ```sh
 api-example-linter demo

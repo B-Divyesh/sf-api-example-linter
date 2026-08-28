@@ -51,7 +51,8 @@ test('mobile first screen, query demo, controls, and keyboard focus work without
   assert.equal(await page.locator(':focus').getAttribute('id'), 'main');
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth), 390);
   await page.screenshot({ path: '.factory/evidence/home-mobile.png', fullPage: true });
-  await page.goto(site.origin + '/?demo=1#sample-result');
+  await page.getByRole('link', { name: 'Try it with sample data' }).click();
+  await page.waitForURL(/\/demo\/\?demo=1/);
   assert.equal(await page.title(), 'Demo — API Example Linter');
   await page.getByText('Demo — sample data, nothing is saved').waitFor();
   await page.getByText('2 example(s) checked · 1 passed · 1 failed').waitFor();

@@ -2,11 +2,12 @@
 
 ## Entry points
 
-- Web: <https://api-example-linter.sociobot.in/?demo=1>
+- One-click web demo: <https://api-example-linter.sociobot.in/demo/?demo=1>
+- Compatible home query: <https://api-example-linter.sociobot.in/?demo=1>
 - Focused web page: <https://api-example-linter.sociobot.in/demo/>
 - CLI: `api-example-linter demo`
 
-The home action opens `?demo=1` in one click.
+The home action opens `/demo/?demo=1` in one click.
 Both web routes load the completed sample result immediately.
 
 ## Sample data

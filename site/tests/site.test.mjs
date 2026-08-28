@@ -40,7 +40,7 @@ test('first screen states the job, audience, demo action, and next result', () =
   const html = readFileSync('site/index.html', 'utf8');
   assert.match(html, /<h1 id="hero-title">Lint API examples against OpenAPI\.<\/h1>/);
   assert.match(html, /For API maintainers whose copied JSON or curl examples drift from their OpenAPI contract\./);
-  assert.match(html, /href="\/\?demo=1#sample-result">Try it with sample data<\/a>/);
+  assert.match(html, /href="\/demo\/\?demo=1">Try it with sample data<\/a>/);
   assert.match(html, /Runs the included failing API example in a temporary folder\./);
   assert.doesNotMatch(html, /Catch the example|Five-minute|Contract-aware|Examples enter|formats between the cracks/i);
 });
