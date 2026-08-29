@@ -22,7 +22,7 @@ The CLI creates a new operating-system temporary directory for every run.
 It copies the bundled samples there and ignores project configuration.
 The directory is removed when the command finishes.
 
-The web recording never reads user files.
+The web recording requests no user files.
 Its state uses only session-storage keys beginning with `demo:api-example-linter:`.
 `Reset demo` clears that namespace and reloads the bundled result.
 `Start for real` clears the namespace and returns home.

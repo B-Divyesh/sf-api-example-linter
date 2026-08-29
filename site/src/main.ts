@@ -1,4 +1,5 @@
 export {};
+declare const __DEMO_TRANSCRIPT__: string;
 
 const main = document.querySelector<HTMLElement>('#main');
 main?.setAttribute('tabindex', '-1');
@@ -34,20 +35,7 @@ const restart = document.querySelector<HTMLButtonElement>('#restart-demo');
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const params = new URLSearchParams(location.search);
 const isDemo = params.get('demo') === '1' || location.pathname.replace(/\/+$/, '') === '/demo';
-const frames = [
-  '<span class="prompt">$</span> api-example-linter demo',
-  'Demo — bundled sample data in a temporary folder',
-  'Temporary folder: /tmp/api-example-linter-demo-7f3c',
-  '',
-  '<span class="scan">CHECK</span>  docs/create-pet.md:6  JSON request',
-  '<span class="pass-text">PASS</span>   name and status match createPet',
-  '<span class="scan">CHECK</span>  docs/create-pet.md:12  curl request body',
-  '<span class="fail-text">FAIL</span>   docs/create-pet.md:12:1  SCHEMA_MISMATCH',
-  '       property <span class="highlight">\'retired_field\'</span> is not allowed  <span class="pointer">($/retired_field)</span>',
-  '',
-  '<span class="summary">FAIL  2 example(s) checked · 1 passed · 1 failed</span>',
-  'Demo complete. The temporary folder is removed now.'
-];
+const frames = __DEMO_TRANSCRIPT__.trimEnd().split('\n');
 let frame = 0;
 let timer: number | undefined;
 let playing = false;
@@ -56,7 +44,7 @@ function renderFrame() {
   if (!output || !empty || !status || !play) return;
   empty.hidden = true;
   if (output.parentElement) output.parentElement.hidden = false;
-  output.innerHTML = frames.slice(0, frame).join('\n');
+  output.textContent = frames.slice(0, frame).join('\n');
   status.textContent = frame >= frames.length ? 'Sample result complete. One stale field was found.' : `Step ${frame} of ${frames.length}.`;
   if (isDemo) sessionStorage.setItem('demo:api-example-linter:frame', String(frame));
   if (frame >= frames.length) {
@@ -97,7 +85,7 @@ restart?.addEventListener('click', () => {
   window.clearInterval(timer);
   playing = false;
   frame = 0;
-  if (output) output.innerHTML = '';
+  if (output) output.textContent = '';
   if (output?.parentElement) output.parentElement.hidden = true;
   if (empty) empty.hidden = false;
   if (play) play.textContent = 'Play recording';
@@ -123,6 +111,33 @@ if (isDemo) {
     }));
   }
 }
+
+function focusRouteHeading() {
+  const heading = document.querySelector<HTMLElement>('main h1');
+  if (heading) {
+    heading.tabIndex = -1;
+    window.requestAnimationFrame(() => {
+      heading.focus({ preventScroll: true });
+      document.querySelector<HTMLElement>('.route-announcer')?.replaceChildren(`Navigated to ${heading.textContent?.trim() ?? 'page'}.`);
+    });
+  }
+}
+
+for (const link of document.querySelectorAll<HTMLAnchorElement>('a[href^="/"]')) {
+  link.addEventListener('click', () => {
+    if (link.pathname !== location.pathname || link.search !== location.search) {
+      sessionStorage.setItem('api-example-linter:route-focus', '1');
+    }
+  });
+}
+const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+if (sessionStorage.getItem('api-example-linter:route-focus') === '1' || navigation?.type === 'back_forward') {
+  sessionStorage.removeItem('api-example-linter:route-focus');
+  focusRouteHeading();
+}
+window.addEventListener('pageshow', event => {
+  if (event.persisted) focusRouteHeading();
+});
 
 document.querySelector<HTMLButtonElement>('[data-reset-demo]')?.addEventListener('click', () => {
   clearDemoStorage();

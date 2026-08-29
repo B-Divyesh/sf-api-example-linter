@@ -2,13 +2,24 @@ import { defineConfig } from 'vite';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 
 const here = fileURLToPath(new URL('.', import.meta.url));
 const outDir = resolve(here, '../dist/site');
+// The terminal recording is produced by the CLI during each site build.  The
+// temporary directory is intentionally normalized because the operating
+// system assigns a different suffix on every demo run.
+const demoTranscript = execFileSync('cargo', ['run', '--quiet', '--', 'demo'], {
+  cwd: resolve(here, '..'),
+  encoding: 'utf8'
+}).replace(/\/tmp\/api-example-linter-demo-[^/\s]+/g, '/tmp/api-example-linter-demo-<temporary>');
 
 export default defineConfig({
   root: resolve(here),
   publicDir: resolve(here, 'public'),
+  define: {
+    __DEMO_TRANSCRIPT__: JSON.stringify(demoTranscript)
+  },
   build: {
     outDir,
     emptyOutDir: true,

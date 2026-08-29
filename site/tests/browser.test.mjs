@@ -78,6 +78,36 @@ test('unknown routes return a designed 404 response', async () => {
   await context.close();
 });
 
+test('route navigation and Back focus and announce the destination heading', async () => {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await page.goto(site.origin + '/');
+  await page.getByRole('link', { name: 'Demo', exact: true }).click();
+  await page.getByRole('heading', { level: 1, name: 'Run the bundled linter sample.' }).waitFor();
+  await page.waitForFunction(() => document.activeElement?.tagName === 'H1');
+  assert.match(await page.locator('.route-announcer').textContent(), /Run the bundled linter sample/);
+  await page.goBack();
+  await page.getByRole('heading', { level: 1, name: 'Lint API examples against OpenAPI.' }).waitFor();
+  await page.waitForFunction(() => document.activeElement?.tagName === 'H1');
+  assert.match(await page.locator('.route-announcer').textContent(), /Lint API examples against OpenAPI/);
+  await context.close();
+});
+
+test('mobile links and buttons meet the 44px touch target baseline', async () => {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  for (const route of ['/', '/demo/', '/privacy/', '/terms/', '/404.html']) {
+    await page.goto(site.origin + route);
+    const targets = await page.locator('a:not(.skip-link), button').evaluateAll(elements => elements.map(element => {
+      const style = getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+      return { text: element.textContent?.trim(), width: rect.width, height: rect.height, visible: style.display !== 'none' && style.visibility !== 'hidden' && rect.width > 0 && rect.height > 0 };
+    }).filter(target => target.visible));
+    for (const target of targets) assert.ok(target.width >= 44 && target.height >= 44, `${route}: ${target.text} is ${target.width}×${target.height}`);
+  }
+  await context.close();
+});
+
 test('every internal link resolves and legal links appear in every footer', async () => {
   const context = await browser.newContext();
   const page = await context.newPage();

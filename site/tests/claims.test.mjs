@@ -46,18 +46,28 @@ test('@claim:demo-temp-isolation bundled demo uses and removes a temporary works
   assert.equal(readFileSync(sentinel, 'utf8'), 'unchanged');
 });
 
-test('@claim:shell-non-execution curl examples are parsed without running shell text', () => {
+test('@claim:shell-non-execution curl examples are parsed without running shell text or making network requests', async () => {
   const cwd = mkdtempSync(join(tmpdir(), 'api-linter-shell-'));
   const marker = join(cwd, 'must-not-exist');
+  let requests = 0;
+  const probe = createServer((_request, response) => {
+    requests += 1;
+    response.writeHead(302, { location: '/elsewhere' });
+    response.end();
+  });
+  await new Promise(done => probe.listen(0, '127.0.0.1', done));
+  const address = probe.address();
   const markdown = join(cwd, 'curl.md');
   const fence = String.fromCharCode(96).repeat(3);
   writeFileSync(markdown, fence + 'curl operation=createPet direction=request\n' +
-    'curl --data=\'{"name":"Ada","tag":"rescue"}\' https://example.invalid/pets; touch ' + marker + '\n' +
+    'curl --data=\'{"name":"Ada","tag":"rescue"}\' http://127.0.0.1:' + address.port + '/redirect; touch ' + marker + '\n' +
     fence + '\n');
   const result = run(['check', markdown, '--spec', resolve('fixtures/openapi.yaml'), '--operation', 'createPet']);
   assert.equal(result.status, 0, result.stderr);
   assert.match(result.stdout, /1 example\(s\) checked · 1 passed/);
   assert.equal(existsSync(marker), false);
+  assert.equal(requests, 0);
+  await new Promise(done => probe.close(done));
 });
 
 test('@claim:supported-inputs JSON, curl, and embedded OpenAPI 3.0 and 3.1 examples are checked', () => {
@@ -73,6 +83,19 @@ test('@claim:supported-inputs JSON, curl, and embedded OpenAPI 3.0 and 3.1 examp
   const openapi30 = run(['check', spec30, '--operation', 'createPet', '--direction', 'request']);
   assert.equal(openapi30.status, 0, openapi30.stderr);
   assert.match(openapi30.stdout, /1 example\(s\) checked · 1 passed/);
+  const fence = String.fromCharCode(96).repeat(3);
+  const forms = join(cwd, 'curl-forms.md');
+  const commands = [
+    "curl --data '{\"name\":\"Ada\"}' https://example.invalid/pets",
+    "curl --data-raw='{\"name\":\"Ada\"}' https://example.invalid/pets",
+    "curl --data-binary='{\"name\":\"Ada\"}' https://example.invalid/pets",
+    "curl -d'{\"name\":\"Ada\"}' https://example.invalid/pets",
+    "curl -d='{\"name\":\"Ada\"}' https://example.invalid/pets"
+  ];
+  writeFileSync(forms, commands.map(command => `${fence}curl operation=createPet direction=request\n${command}\n${fence}`).join('\n'));
+  const allForms = run(['check', forms, '--spec', 'fixtures/openapi.yaml', '--operation', 'createPet']);
+  assert.equal(allForms.status, 0, allForms.stderr);
+  assert.match(allForms.stdout, /5 example\(s\) checked · 5 passed/);
 });
 
 test('@claim:schema-mapping named schemas and operation request mappings both validate', () => {
@@ -93,6 +116,33 @@ test('@claim:diagnostic-output text, JSON, and GitHub output identify the failed
   assert.match(github.stdout, /::error file=fixtures\/invalid\.md,line=4,col=1,title=SCHEMA_MISMATCH::/);
   assert.equal(run(['check', 'fixtures/valid.md', '--spec', 'fixtures/openapi.yaml', '--schema', 'Pet']).status, 0);
   assert.equal(run(['check', 'missing.md', '--format', 'json']).status, 2);
+});
+
+test('@claim:mapping-metadata fence metadata supports schema, operation, request, response, and global defaults', () => {
+  const cwd = mkdtempSync(join(tmpdir(), 'api-linter-metadata-'));
+  const docs = join(cwd, 'examples.md');
+  const fence = String.fromCharCode(96).repeat(3);
+  writeFileSync(docs, [
+    `${fence}json schema=Pet\n{"name":"Ada"}\n${fence}`,
+    `${fence}json operation=createPet direction=request\n{"name":"Ada"}\n${fence}`,
+    `${fence}json operation=createPet direction=response\n{"name":"Ada"}\n${fence}`,
+    `${fence}json\n{"name":"Ada"}\n${fence}`
+  ].join('\n'));
+  const result = run(['check', docs, '--spec', 'fixtures/openapi.yaml', '--operation', 'createPet', '--direction', 'request']);
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /4 example\(s\) checked · 4 passed/);
+});
+
+test('@claim:config-precedence CLI flags override conflicting configuration values', () => {
+  const cwd = mkdtempSync(join(tmpdir(), 'api-linter-config-precedence-'));
+  const config = join(cwd, 'config.json');
+  writeFileSync(config, JSON.stringify({
+    spec: resolve('fixtures/openapi.yaml'), inputs: [resolve('fixtures/invalid.md')], schema: 'Missing', format: 'json'
+  }));
+  const result = run(['check', 'fixtures/valid.md', '--config', config, '--spec', 'fixtures/openapi.yaml', '--schema', 'Pet', '--format', 'text']);
+  assert.equal(result.status, 0, result.stderr);
+  assert.match(result.stdout, /2 example\(s\) checked · 2 passed/);
+  assert.doesNotMatch(result.stdout, /"summary"/);
 });
 
 test('@claim:config-init starter configuration is created without overwriting an existing file', () => {
@@ -144,7 +194,7 @@ test('@claim:local-by-default default checks work offline and never fetch remote
   await new Promise(done => probe.close(done));
 });
 
-test('@claim:mock-host-gating mock requests require an explicit permitted host', async () => {
+test('@claim:mock-host-gating mock requests require a loopback or explicitly allowed host', async () => {
   const denied = run(['check', 'fixtures/valid.md', '--spec', 'fixtures/openapi.yaml', '--operation', 'createPet', '--direction', 'request', '--mock-base-url', 'http://example.invalid']);
   assert.equal(denied.status, 1);
   assert.match(denied.stdout, /not allowed/);
@@ -154,15 +204,30 @@ test('@claim:mock-host-gating mock requests require an explicit permitted host',
     response.writeHead(204);
     response.end();
   });
-  await new Promise(done => mock.listen(0, '127.0.0.1', done));
+  await new Promise(done => mock.listen(0, done));
   const address = mock.address();
   const allowed = await runAsync(['check', 'fixtures/valid.md', '--spec', 'fixtures/openapi.yaml', '--operation', 'createPet', '--direction', 'request', '--mock-base-url', 'http://127.0.0.1:' + address.port]);
   assert.equal(allowed.status, 0, allowed.stderr || allowed.stdout);
   assert.equal(requests, 2);
+  const explicitlyAllowed = await runAsync(['check', 'fixtures/valid.md', '--spec', 'fixtures/openapi.yaml', '--operation', 'createPet', '--direction', 'request', '--mock-base-url', 'http://localhost.:' + address.port, '--allow-host', 'localhost.']);
+  assert.equal(explicitlyAllowed.status, 0, explicitlyAllowed.stderr || explicitlyAllowed.stdout);
+  assert.equal(requests, 4);
   await new Promise(done => mock.close(done));
 });
 
-test('@claim:browser-privacy demo flow makes only same-origin requests and sets no cookies', async () => {
+test('@claim:demo-transcript-parity web recording is the normalized CLI demo output', async () => {
+  const cli = run(['demo']);
+  assert.equal(cli.status, 0, cli.stderr);
+  const normalize = value => value.replace(/\/tmp\/api-example-linter-demo-[^/\s]+/g, '/tmp/api-example-linter-demo-<temporary>').trim();
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await page.goto(site.origin + '/demo/?demo=1');
+  const transcript = await page.locator('#terminal-output code').textContent();
+  assert.equal(normalize(transcript ?? ''), normalize(cli.stdout));
+  await context.close();
+});
+
+test('@claim:browser-privacy demo flow makes only same-origin requests and sets no cookies or file controls', async () => {
   const context = await browser.newContext();
   const page = await context.newPage();
   const requests = [];
@@ -174,6 +239,7 @@ test('@claim:browser-privacy demo flow makes only same-origin requests and sets 
   assert.deepEqual(await context.cookies(), []);
   assert.equal(await page.evaluate(() => localStorage.length), 0);
   assert.equal(await page.locator('form').count(), 0);
+  assert.equal(await page.locator('input[type="file"]').count(), 0);
   await context.close();
 });
 
@@ -189,7 +255,7 @@ test('@claim:demo-web-isolation reset removes only demo session data', async () 
   const storage = await page.evaluate(() => Object.fromEntries(Object.entries(sessionStorage)));
   assert.equal(storage['real:user-setting'], 'keep');
   assert.equal(storage['demo:api-example-linter:old'], undefined);
-  assert.equal(storage['demo:api-example-linter:frame'], '12');
+  assert.equal(storage['demo:api-example-linter:frame'], '7');
   await context.close();
 });
 

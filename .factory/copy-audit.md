@@ -1,6 +1,6 @@
 # Landing copy audit
 
-Audited 28 August 2026.
+Audited 29 August 2026.
 Counts treat hyphenated terms and code tokens as one word.
 No sentence exceeds 22 words.
 No banned marketing word appears.
@@ -18,14 +18,14 @@ No banned marketing word appears.
 | Privacy | 1 | Pass |
 | GitHub | 1 | Pass |
 | Demo — sample data, nothing is saved | 6 | Pass |
-| The output comes from the bundled failing example. | 8 | Pass |
+| Recording of the bundled CLI sample. Nothing is saved. | 9 | Pass |
 | Reset demo | 2 | Pass |
 | Start for real | 3 | Pass |
 | OpenAPI example checks | 3 | Pass |
 | Lint API examples against OpenAPI. | 5 | Pass |
 | For API maintainers whose copied JSON or curl examples drift from their OpenAPI contract. | 14 | Pass |
 | Try it with sample data | 5 | Pass |
-| Runs the included failing API example in a temporary folder. | 10 | Pass |
+| Opens a recording of the bundled CLI sample. | 8 | Pass |
 | Install the CLI | 3 | Pass |
 | Default checks make no network requests. | 6 | Pass |
 | The CLI works without a network connection. | 8 | Pass |
@@ -65,13 +65,13 @@ No banned marketing word appears.
 | Validate request and response payloads with optional metadata on the fence. | 11 | Pass |
 | Curl request bodies | 3 | Pass |
 | Parse JSON data flags as text. | 6 | Pass |
-| Never invoke a shell or follow a redirect. | 8 | Pass |
+| Never invoke a shell or make a network request. | 9 | Pass |
 | OpenAPI examples | 2 | Pass |
 | Check examples inside OpenAPI 3.0 and 3.1 documents against their operation schema. | 12 | Pass |
 | Scope and privacy | 3 | Pass |
 | What the linter does not do | 6 | Pass |
 | It does not run curl commands or fetch remote references. | 10 | Pass |
-| Mock requests happen only when you provide a permitted local host. | 11 | Pass |
+| Mock requests happen only when you opt in and use a permitted host. | 12 | Pass |
 | CI setup | 2 | Pass |
 | Add the linter to CI | 5 | Pass |
 | Add one configuration file and one CI command. | 8 | Pass |

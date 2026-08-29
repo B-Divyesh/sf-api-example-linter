@@ -45,7 +45,7 @@
 
     <aside class="demo-banner" data-demo-banner aria-label="Demo status" hidden>
       <strong>Demo — sample data, nothing is saved</strong>
-      <span>The output comes from the bundled failing example.</span>
+      <span>Recording of the bundled CLI sample. Nothing is saved.</span>
       <div><button type="button" data-reset-demo>Reset demo</button><a href="/" data-leave-demo>Start for real</a></div>
     </aside>
 
@@ -57,7 +57,7 @@
           <p class="lede">For API maintainers whose copied JSON or curl examples drift from their OpenAPI contract.</p>
           <div class="hero-actions">
             <a class="button primary" href="/demo/?demo=1">Try it with sample data</a>
-            <span class="action-note">Runs the included failing API example in a temporary folder.</span>
+            <span class="action-note">Opens a recording of the bundled CLI sample.</span>
           </div>
           <a class="text-link secondary-action" href="#install">Install the CLI <span aria-hidden="true">↓</span></a>
           <ul class="hero-facts" aria-label="Product facts">
@@ -124,7 +124,7 @@
         </div>
         <div class="format-grid">
           <article><div class="format-mark json-mark" aria-hidden="true">{ }</div><h3>Fenced JSON</h3><p>Validate request and response payloads with optional metadata on the fence.</p></article>
-          <article><div class="format-mark curl-mark" aria-hidden="true">↳_</div><h3>Curl request bodies</h3><p>Parse JSON data flags as text. Never invoke a shell or follow a redirect.</p></article>
+          <article><div class="format-mark curl-mark" aria-hidden="true">↳_</div><h3>Curl request bodies</h3><p>Parse JSON data flags as text. Never invoke a shell or make a network request.</p></article>
           <article><div class="format-mark api-mark" aria-hidden="true">◇</div><h3>OpenAPI examples</h3><p>Check examples inside OpenAPI 3.0 and 3.1 documents against their operation schema.</p></article>
         </div>
       </section>
@@ -133,7 +133,7 @@
         <div class="section-intro">
           <p class="eyebrow"><span>05</span> Scope and privacy</p>
           <h2 id="limits-title">What the linter does not do</h2>
-          <p>It does not run curl commands or fetch remote references. Mock requests happen only when you provide a permitted local host.</p>
+          <p>It does not run curl commands or fetch remote references. Mock requests happen only when you opt in and use a permitted host.</p>
         </div>
       </section>
 

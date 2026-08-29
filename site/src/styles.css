@@ -4,7 +4,7 @@
 *{box-sizing:border-box}
 html{scroll-behavior:smooth;background:var(--bg)}
 body{margin:0;background-color:var(--bg);color:var(--text);font-size:16px;line-height:1.6;background-image:linear-gradient(to right,rgba(51,70,168,.055) 1px,transparent 1px),linear-gradient(to bottom,rgba(51,70,168,.055) 1px,transparent 1px);background-size:32px 32px}
-a{color:inherit;text-underline-offset:4px}button,a{touch-action:manipulation}button{font:inherit}
+a{color:inherit;text-underline-offset:4px}button,a{touch-action:manipulation}button{font:inherit}a:not(.skip-link){display:inline-flex;align-items:center;min-width:44px;min-height:44px}
 button:focus-visible,a:focus-visible{outline:3px solid var(--signal);outline-offset:4px}
 .skip-link{position:fixed;z-index:100;top:8px;left:8px;padding:12px 16px;background:var(--text);color:var(--bg);transform:translateY(-160%)}.skip-link:focus{transform:none}
 .offline{position:relative;z-index:20;padding:8px var(--pad);background:var(--warning);color:#fff;font:600 14px/1.4 'JetBrains Mono',monospace;text-align:center}

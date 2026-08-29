@@ -24,14 +24,18 @@ for (const [page, title] of pages) {
   });
 }
 
-for (const page of pages.slice(0, 4).map(([file]) => file)) {
+for (const page of pages.map(([file]) => file)) {
   test(`${page} has share and canonical metadata`, () => {
     const html = readFileSync(page, 'utf8');
     assert.match(html, /rel="canonical"/);
     assert.match(html, /property="og:title"/);
     assert.match(html, /property="og:description"/);
-    assert.match(html, /contract-loom-social\.png/);
+    assert.match(html, /property="og:image" content="https:\/\/api-example-linter\.sociobot\.in\/assets\/contract-loom-social\.png"/);
+    assert.match(html, /property="og:image:width" content="1200"/);
+    assert.match(html, /property="og:image:height" content="630"/);
+    assert.match(html, /property="og:image:alt"/);
     assert.match(html, /name="twitter:card" content="summary_large_image"/);
+    assert.match(html, /name="twitter:image" content="https:\/\/api-example-linter\.sociobot\.in\/assets\/contract-loom-social\.png"/);
     assert.match(html, /rel="apple-touch-icon"/);
   });
 }
@@ -41,7 +45,7 @@ test('first screen states the job, audience, demo action, and next result', () =
   assert.match(html, /<h1 id="hero-title">Lint API examples against OpenAPI\.<\/h1>/);
   assert.match(html, /For API maintainers whose copied JSON or curl examples drift from their OpenAPI contract\./);
   assert.match(html, /href="\/demo\/\?demo=1">Try it with sample data<\/a>/);
-  assert.match(html, /Runs the included failing API example in a temporary folder\./);
+  assert.match(html, /Opens a recording of the bundled CLI sample\./);
   assert.doesNotMatch(html, /Catch the example|Five-minute|Contract-aware|Examples enter|formats between the cracks/i);
 });
 
@@ -61,6 +65,26 @@ test('runtime uses no third-party analytics or font hosts', () => {
     const source = readFileSync(file, 'utf8');
     assert.doesNotMatch(source, /fonts\.googleapis|fonts\.gstatic|googletag|segment\.io/i);
   }
+});
+
+test('published behavioral copy is covered by the claims registry', () => {
+  const claims = new Set(JSON.parse(readFileSync('.factory/claims.json', 'utf8')).map(claim => claim.id));
+  const published = [
+    ['The CLI works without a network connection.', 'local-by-default'],
+    ['Curl is text', 'shell-non-execution'],
+    ['Local references', 'local-by-default'],
+    ['GitHub output', 'diagnostic-output'],
+    ['It creates, checks, and removes a temporary sample folder.', 'demo-temp-isolation'],
+    ['OpenAPI 3.0 and 3.1', 'supported-inputs'],
+    ['Mock requests happen only when you opt in and use a permitted host.', 'mock-host-gating'],
+    ['CLI flags override configuration.', 'config-precedence'],
+    ['Every visitor-facing claim', 'not-published']
+  ];
+  const copy = ['site/index.html', 'site/privacy/index.html', 'site/terms/index.html', 'README.md'].map(file => readFileSync(file, 'utf8')).join('\n');
+  for (const [phrase, claim] of published) {
+    if (copy.includes(phrase)) assert.ok(claims.has(claim), `${phrase} must map to ${claim}`);
+  }
+  assert.doesNotMatch(copy, /Download a release binary|Five-minute|under five minutes/);
 });
 
 test('visible install command is the exact executable command copied by the control', () => {

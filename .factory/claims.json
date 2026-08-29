@@ -8,17 +8,17 @@
   },
   {
     "id": "shell-non-execution",
-    "claim": "Curl blocks are parsed as text and never executed.",
+    "claim": "Curl blocks are parsed as text and never executed or sent over the network.",
     "where": "README, home proof strip, supported formats, privacy scope",
     "test": "npm run test:claims -- --test-name-pattern=@claim:shell-non-execution",
-    "sandbox": "Check a curl fence containing a shell file-write payload and assert validation succeeds while the marker is absent."
+    "sandbox": "Check a curl fence containing a shell file-write payload and redirecting local URL; assert validation succeeds, the marker is absent, and the probe sees no request."
   },
   {
     "id": "supported-inputs",
-    "claim": "The CLI checks fenced JSON, curl request bodies, and embedded examples in OpenAPI 3.0 and 3.1 files.",
+    "claim": "The CLI checks fenced JSON, curl request bodies, and embedded examples in OpenAPI 3.0 and 3.1 files; curl supports --data, --data-raw, --data-binary, and -d in separated, equals, and compact forms.",
     "where": "README, home how-it-works and supported input formats",
     "test": "npm run test:claims -- --test-name-pattern=@claim:supported-inputs",
-    "sandbox": "Run the binary against shipped Markdown fixtures and temporary OpenAPI 3.0 and 3.1 documents; assert discovered and passed totals."
+    "sandbox": "Run the binary against shipped Markdown fixtures, temporary OpenAPI 3.0 and 3.1 documents, and one fixture for each documented curl flag form; assert discovered and passed totals."
   },
   {
     "id": "schema-mapping",
@@ -29,10 +29,24 @@
   },
   {
     "id": "diagnostic-output",
-    "claim": "Failures identify the file, line, JSON pointer, and mismatch in text, JSON, and GitHub output.",
+    "claim": "Failures identify the file, line, JSON pointer, and mismatch in text, JSON, and GitHub output; exit codes are 0 for pass, 1 for findings, and 2 for invalid input or configuration.",
     "where": "README output, home how-it-works and CI setup",
     "test": "npm run test:claims -- --test-name-pattern=@claim:diagnostic-output",
     "sandbox": "Run the shipped invalid fixture in every format; assert exit 1, file, mismatch, and exact GitHub line annotation."
+  },
+  {
+    "id": "mapping-metadata",
+    "claim": "Fence metadata supports operation, schema, and request or response direction; global flags provide defaults.",
+    "where": "README Markdown conventions",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:mapping-metadata",
+    "sandbox": "Run fenced examples with every metadata key and both directions plus an unannotated example resolved by global operation and direction flags."
+  },
+  {
+    "id": "config-precedence",
+    "claim": "CLI flags override configuration values.",
+    "where": "README configuration",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:config-precedence",
+    "sandbox": "Supply conflicting input, schema, and format values in a temporary config and assert explicit CLI values produce the documented passing text output."
   },
   {
     "id": "config-init",
@@ -60,11 +74,18 @@
     "claim": "Mock requests run only when requested and require loopback or an explicitly allowed hostname.",
     "where": "README mock checks, home scope, privacy page",
     "test": "npm run test:claims -- --test-name-pattern=@claim:mock-host-gating",
-    "sandbox": "Assert an unlisted host is denied, then opt into a temporary loopback server and observe two sample requests."
+    "sandbox": "Assert an unlisted host is denied, then observe requests to a temporary loopback server and a separately explicitly allowed hostname."
+  },
+  {
+    "id": "demo-transcript-parity",
+    "claim": "The web demo records the bundled CLI sample output.",
+    "where": "home demo action and banner, demo page",
+    "test": "npm run test:claims -- --test-name-pattern=@claim:demo-transcript-parity",
+    "sandbox": "Run the built CLI demo and load /demo/?demo=1; normalize only the OS-generated temporary path and assert the displayed transcript is identical."
   },
   {
     "id": "browser-privacy",
-    "claim": "The website uses no analytics, cookies, forms, or third-party runtime requests.",
+    "claim": "The website uses no analytics, advertising, cookies, forms, file requests, or third-party runtime requests.",
     "where": "README website, privacy page",
     "test": "npm run test:claims -- --test-name-pattern=@claim:browser-privacy",
     "sandbox": "Record every browser request through the demo flow and assert same-origin only, no cookies, and no localStorage."

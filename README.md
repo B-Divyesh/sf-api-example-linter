@@ -21,7 +21,7 @@ It then removes the folder without reading project configuration.
 
 ## Install
 
-Download a release binary, or install from source with Rust 1.85 or newer:
+Install from source:
 
 ```sh
 cargo install --git https://github.com/B-Divyesh/sf-api-example-linter.git
@@ -140,11 +140,6 @@ cargo clippy --all-targets -- -D warnings
 cargo package --locked
 ```
 
-`npm test` runs Rust, site, claim, browser, accessibility, privacy, and offline checks.
-`npm run build` writes the binary to `dist/bin` and the static site to `dist/site`.
-`npm run build:site` builds only the static site.
-
-Every visitor-facing claim is mapped to one tagged test in [.factory/claims.json](.factory/claims.json).
 The [demo contract](.factory/demo.md) documents isolation and reset behavior.
 
 ## Scope
