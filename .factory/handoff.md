@@ -1,4 +1,35 @@
-# Polish round 3 handoff
+# Review 4 handoff
+
+## Outcome
+
+Reviewer-only changes added `.factory/review-4.md`. The review is **PASS**: no blocking or minor product finding remains. No product code or deployment configuration was changed.
+
+## Verification
+
+- Fresh clone: `/tmp/api-example-linter-review4-clean.6XLYHo`, from `origin/main` at `8a5b50e76d759a69f17f4ebd4b92c444eb588dca`.
+- `npm ci`, `npm test`, `npm run build`, `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo package --locked` passed.
+- Every one of the 16 exact `.factory/claims.json` commands passed independently.
+- Live cold Chromium checks at 390px and desktop passed first-read clarity, one-click demo, transcript parity, reset isolation, same-origin request logging, route focus/announcement, metadata, link crawl, live axe scans, and designed 404 behaviour.
+- Production JavaScript and CSS hashes match the clean build.
+
+## How to verify
+
+```sh
+npm ci
+npm test
+npm run build
+cargo fmt --check
+cargo clippy --all-targets -- -D warnings
+cargo package --locked
+```
+
+Open <https://api-example-linter.sociobot.in/demo/?demo=1> for the sample sandbox. Run `api-example-linter demo` from an empty temporary directory to verify the CLI path.
+
+## Known gaps
+
+None identified in review 4.
+
+## Previous round record
 
 ## Outcome
 
