@@ -1,1 +1,1 @@
-Check JSON and curl documentation examples against OpenAPI before they reach readers.
+Lint API documentation examples against OpenAPI before readers use them.

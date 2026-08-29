@@ -118,7 +118,7 @@ function focusRouteHeading() {
     heading.tabIndex = -1;
     window.requestAnimationFrame(() => {
       heading.focus({ preventScroll: true });
-      document.querySelector<HTMLElement>('.route-announcer')?.replaceChildren(`Navigated to ${heading.textContent?.trim() ?? 'page'}.`);
+      document.querySelector<HTMLElement>('.route-announcer')?.replaceChildren(`Navigated to ${heading.textContent?.trim() ?? 'page'}`);
     });
   }
 }

@@ -85,11 +85,11 @@ test('route navigation and Back focus and announce the destination heading', asy
   await page.getByRole('link', { name: 'Demo', exact: true }).click();
   await page.getByRole('heading', { level: 1, name: 'Run the bundled linter sample.' }).waitFor();
   await page.waitForFunction(() => document.activeElement?.tagName === 'H1');
-  assert.match(await page.locator('.route-announcer').textContent(), /Run the bundled linter sample/);
+  assert.equal(await page.locator('.route-announcer').textContent(), 'Navigated to Run the bundled linter sample.');
   await page.goBack();
   await page.getByRole('heading', { level: 1, name: 'Lint API examples against OpenAPI.' }).waitFor();
   await page.waitForFunction(() => document.activeElement?.tagName === 'H1');
-  assert.match(await page.locator('.route-announcer').textContent(), /Lint API examples against OpenAPI/);
+  assert.equal(await page.locator('.route-announcer').textContent(), 'Navigated to Lint API examples against OpenAPI.');
   await context.close();
 });
 
