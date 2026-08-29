@@ -2,7 +2,7 @@
 
 **Candidate repaired:** `bf275586e2a17a66bf4ebf968f17d16317605aab`  
 **Review:** `64f5b2669deedc2d3aae71f55fc336421a9831da`  
-**Repair commit:** recorded in the final handoff
+**Repair commit:** `7abf9e100d03a71b8ea3aaace3153ba3a85dc24f`
 
 No finding is deferred. The live recheck is recorded in the handoff after deployment.
 
@@ -35,3 +35,4 @@ No finding is deferred. The live recheck is recorded in the handoff after deploy
 - `npm run build` produced `dist/bin/api-example-linter` and `dist/site`.
 - `cargo fmt --check` and `cargo clippy --all-targets -- -D warnings` passed.
 - Browser tests produced `.factory/evidence/home-mobile.png`, `.factory/evidence/demo-mobile.png`, and `.factory/evidence/404-desktop.png`.
+- Clean clone `/tmp/api-example-linter-polish2-clean-93Vkjy`: `npm ci`, `npm test`, `npm run build`, `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo package --locked` passed. Each of the 16 registry commands was then run independently; logs are `/tmp/api-example-linter-claim-*.log`.
