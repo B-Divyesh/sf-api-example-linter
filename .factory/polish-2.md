@@ -36,3 +36,9 @@ No finding is deferred. The live recheck is recorded in the handoff after deploy
 - `cargo fmt --check` and `cargo clippy --all-targets -- -D warnings` passed.
 - Browser tests produced `.factory/evidence/home-mobile.png`, `.factory/evidence/demo-mobile.png`, and `.factory/evidence/404-desktop.png`.
 - Clean clone `/tmp/api-example-linter-polish2-clean-93Vkjy`: `npm ci`, `npm test`, `npm run build`, `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, and `cargo package --locked` passed. Each of the 16 registry commands was then run independently; logs are `/tmp/api-example-linter-claim-*.log`.
+
+## Deployment recheck
+
+- Static deployment `68d1e798-aa6b-4ab7-8d56-c54ce4b3e35e` completed successfully at <https://api-example-linter.sociobot.in/>.
+- Cold live Playwright check passed for the first screen, one-click demo/banner/reset isolation, real transcript content, Back focus, 44px mobile targets, every route’s social metadata, designed 404, same-origin requests/no cookies, and offline demo reload.
+- Live screenshots: `.factory/evidence/live/home-mobile.png`, `.factory/evidence/live/demo-mobile.png`, `.factory/evidence/live/404-mobile.png`, and `.factory/evidence/live/screenshot-desktop.png`.

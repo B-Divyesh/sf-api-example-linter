@@ -23,7 +23,18 @@ Build output is `dist/bin/api-example-linter` and `dist/site`. `cargo package --
 
 ## Deployment and live evidence
 
-Deployment follows the static work order: `npm ci && npm run build:site`, publishing `dist/site` after the final push to `main`. Add the final commit, deployment result, and cold live recheck here after pushing.
+The static work-order deployment ran `npm ci && npm run build:site` and published `dist/site`. Azure Static Web Apps deployment `68d1e798-aa6b-4ab7-8d56-c54ce4b3e35e` completed successfully at <https://api-example-linter.sociobot.in/>.
+
+Cold live verification passed after deployment:
+
+- `/opt/fleet/lib/verify-url.sh` returned HTTP 200 in 703 ms with no console errors, `lang=en`, one h1, a main landmark, alt text, and labelled buttons.
+- Live Playwright + axe found zero serious or critical WCAG A/AA issues.
+- The one-click demo showed the generated CLI transcript with `SCHEMA_MISMATCH` and none of the old invented `CHECK`/`PASS` lines. Reset retained `real:keep` and removed the demo key.
+- The live `/ → /demo/ → Back` flow focused the destination h1. Every visible mobile link/button measured at least 44×44px.
+- Home, demo, privacy, terms, and 404 exposed the complete social-image metadata; `/no-such-page` returned 404 with the designed page.
+- The cold browser flow made same-origin requests only, stored no cookies, and the visited demo reloaded offline.
+
+Screenshots and verifier output are under `.factory/evidence/live/` in the worktree.
 
 ## Known gaps
 
