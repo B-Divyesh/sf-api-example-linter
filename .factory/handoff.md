@@ -1,31 +1,37 @@
-# API Example Linter — polish round 1 handoff
+# Review 2 handoff
 
-## Status
+## Outcome
 
-Polish round 1 is complete.
-Every finding in `.factory/review-1.md` is fixed, tested, pushed, deployed, and checked cold on the live domain.
-No earlier verified repair regressed.
+Adversarial first-read review 2 is complete at commit `bf275586e2a17a66bf4ebf968f17d16317605aab`.
 
-- Live site: <https://api-example-linter.sociobot.in/>
-- One-click sample: <https://api-example-linter.sociobot.in/demo/?demo=1>
-- Product commits: `7639146`, `17e6c16`
-- Deployment: `50bef5e6-bf9d-434e-9e7a-d1df184b7639`
+Verdict: **FAIL**. The complete report is `.factory/review-2.md`.
 
-## What changed
+No product code was changed. This work order changes only the review and this handoff.
 
-- Added `api-example-linter demo` with two bundled examples in `examples/`.
-- The demo runs the real validator in a fresh temporary folder and removes it afterward.
-- Added the isolated browser demo route, banner, reset, exit, offline behavior, and demo-only session namespace.
-- Rewrote the first screen and all reviewed jargon in plain words.
-- Added `.factory/claims.json` with 13 individually selectable claim tests.
-- Added unique route metadata, canonical links, social art, a touch icon, consistent legal links, and a true 404 response.
-- Preserved and extended the Contract Loom visual system across demo, legal, mobile, and 404 states.
-- Added browser, axe, privacy, offline, keyboard, mobile, routing, link, metadata, and response-policy tests.
-- Rewrote README documentation and added `.factory/demo.md`, `.factory/copy-audit.md`, and the ≤120-character catalog description.
+## Verification performed
 
-The complete finding-to-change-to-evidence map is in `.factory/polish-1.md`.
+- Opened the live site cold at 390×844 and 1440×1000.
+- Exercised the one-click demo, banner, Reset demo, Start for real, storage isolation, and live offline reload.
+- Recorded all live requests; they were same-origin, with no cookies or console/page errors.
+- Ran Playwright axe checks at both sizes with zero WCAG A/AA violations.
+- Crawled every site link and checked all route titles, h1/main counts, canonical/OG/Twitter metadata, the designed 404, browser Back, focus, and mobile target sizes.
+- Ran `/opt/fleet/lib/verify-url.sh`; the live page passed its baseline checks in 564 ms.
+- Cloned the exact candidate to `/tmp/ael-review2-clean.FA2f3E` and ran every one of the 13 `.factory/claims.json` commands separately; all passed.
+- From that clean clone, ran `npm test`, `npm run build`, `cargo fmt --check`, and `cargo clippy --all-targets -- -D warnings`; all passed.
+- Ran the release CLI demo from a separate temporary directory and confirmed its workspace was removed.
+- Confirmed live HTML/JS/CSS hashes match the clean build.
+- Rechecked every finding in review 1 plus both earlier verification reports against live behavior and source.
 
-## Run and verify
+## Open findings
+
+- F-1-2 reopened (blocking): the hard-coded web recording differs from actual CLI output.
+- F-1-4 reopened (blocking): visitor-facing behavior remains unlisted or under-tested in the claim registry.
+- F-2-1: README offers a release binary, but the repository has no release/tag or download link.
+- F-2-2: route changes and Back leave focus on `<body>`.
+- F-2-3: several mobile links are smaller than 44×44px.
+- F-2-4: demo/legal/404 social metadata is incomplete.
+
+## How to verify the review
 
 ```sh
 npm ci
@@ -33,73 +39,7 @@ npm test
 npm run build
 cargo fmt --check
 cargo clippy --all-targets -- -D warnings
-cargo package --locked
-```
-
-Run one claim exactly as the registry does:
-
-```sh
-npm run test:claims -- --test-name-pattern=@claim:demo-temp-isolation
-```
-
-Try the shipped CLI sample:
-
-```sh
 ./dist/bin/api-example-linter demo
 ```
 
-The build writes the binary to `dist/bin/api-example-linter`.
-It writes the deployable static site to `dist/site`.
-
-## Exact verification
-
-Final fresh clone `/tmp/api-linter-polish-final-cWyFOt` passed:
-
-- all 13 claim commands separately;
-- 9 Rust unit tests;
-- 7 CLI integration tests;
-- 1 Rust doctest;
-- 15 static site tests;
-- 13 full claim tests;
-- 4 browser suites;
-- Rust formatting and clippy with warnings denied;
-- release build and Cargo package verification.
-
-`cargo package --locked` produced 19 files.
-The package is 129.1 KiB unpacked and 33.4 KiB compressed.
-
-The final live cold check passed:
-
-- primary sample action reached `/demo/?demo=1` in one click;
-- banner, seeded result, Reset demo, and Start for real were present;
-- terminal output began within the 390×844 first viewport;
-- Reset demo removed only demo session keys;
-- unknown routes returned HTTP 404 with “Page not found”;
-- home, demo, privacy, and terms had unique titles, one h1, and one main;
-- no horizontal overflow, console errors, cookies, or third-party requests;
-- visited demo reloaded offline;
-- zero serious or critical axe findings.
-
-The factory verifier loaded the live home page in 641 ms with no errors.
-Live Lighthouse mobile scored 100 in Performance, Accessibility, Best Practices, and SEO.
-LCP was 1.8 seconds, TBT was 30 ms, and CLS was 0.
-
-Initial built assets are 4.70 KB JavaScript, 14.44 KB CSS, 88.66 KB fonts, and a 70.41 KB hero image.
-Live HTML, JavaScript, and CSS SHA-256 values exactly match `dist/site`.
-
-## Evidence
-
-- Mobile home: `.factory/evidence/live/screenshot-mobile.png`
-- One-click demo first viewport: `.factory/evidence/live/demo-final-mobile.png`
-- Desktop home: `.factory/evidence/live/screenshot-desktop.png`
-- Designed 404: `.factory/evidence/404-desktop.png`
-- Verifier report: `.factory/evidence/live/verify.json`
-- Lighthouse report: `.factory/evidence/live/lighthouse-final.json`
-
-Evidence files are intentionally ignored by Git and remain in the worktree.
-
-## Open findings and next steps
-
-There are no open review or acceptance findings.
-Remote references and production-host probing remain explicit product boundaries, not unfinished work.
-Registry publication remains a factory operation; the verified Cargo package is ready.
+Compare the last command’s exact output with the terminal at <https://api-example-linter.sociobot.in/demo/?demo=1>. Then audit every README and landing claim against `.factory/claims.json` rather than relying only on the current passing test count.
